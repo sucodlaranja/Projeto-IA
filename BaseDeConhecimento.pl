@@ -34,7 +34,7 @@ mapa(santa_marta_de_portuzelo,perre,5).
 mapa(perre,outeiro,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
 mapa(meadela,darque,10).
-mapa(darque,vila_do_punhe,10).
+mapa(darque,vila_de_punhe,10).
 
 
 %encomenda(id,peso,prazo,freguesia,data,estafeta,transporte,(estado?-boolean entregue,a entregar?)).
