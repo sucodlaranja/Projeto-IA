@@ -17,7 +17,7 @@ remove(Termo) :- assert(Termo), !, fail.
 
 %para verificar que existe caminho e ja diz a distancia
 adjacente(A,B,Km) :- mapa(A,B,Km).
-adjacente(B,A,Km) :- mapa(B,A,Km).
+adjacente(A,B,Km) :- mapa(B,A,Km).
 
 caminho(A,B,P,Km) :- caminho1(A,[B],P,Km).
 caminho1(A,[A|P1],[A|P1],0).

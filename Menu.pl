@@ -41,4 +41,5 @@ menuestatisticas :-
     opcaoestatisticas(X). 
 
 opcaoestatisticas(6):- 
-    write('Insira o nome do estafeta').
+    write('Insira o nome do estafeta'),
+    read(X).
