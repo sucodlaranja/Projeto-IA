@@ -1,3 +1,7 @@
+%esta condicao e pra dizer ao prolog que a encomenda nao e estatica e podemos adicionar
+:- dynamic(encomenda/8).
+:- dynamic(inicio/1).
+
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao(5-0),ocupado) secalhar meter um id aqui e nos transportes?
 estafeta(joao,4,false).
@@ -33,4 +37,4 @@ mapa(meadela,darque,10).
 mapa(darque,vila_do_punhe,10).
 
 
-%encomenda(peso,prazo,freguesia,data,estafeta,transporte,(estado?-boolean entregue,a entregar?)).
+%encomenda(id,peso,prazo,freguesia,data,estafeta,transporte,(estado?-boolean entregue,a entregar?)).

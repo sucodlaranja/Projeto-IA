@@ -1,11 +1,13 @@
+:- consult('Funcionalidades.pl').
 menu :-
-    write('--------------------------------MENU-----------------------------------'),nl,nl,
-    write('1 - consultar os estafetas'),nl,
-    write('2 - consultar encomendas'),nl,
-    write('3 - consultar transporte'),nl,
-    write('4 - adicionar encomenda'),nl,
-    write('5 - verificar estatisticas encomendas'),nl,
-    write('6 - Exit'),nl,
+    writeln('--------------------------------MENU-----------------------------------'),nl,
+    writeln('1 - consultar os estafetas'),
+    writeln('2 - consultar encomendas'),
+    writeln('3 - consultar transporte'),
+    writeln('4 - adicionar encomenda'),
+    writeln('5 - verificar estatisticas encomendas'),
+    writeln('6 - finalizar entrega'),
+    writeln('7 - Exit'),
     write('Choose: ').
 
 
@@ -14,18 +16,29 @@ menu :-
 menuencomenda :- 
     write('Peso: '),read(Peso),
     write('prazo: '),read(Prazo),
-    write('freguesia',read(Freguesia)),
-    write('data(XX-YY-ZZZZ,hh:mm'),read(Data).
+    write('freguesia:'),read(Freguesia),
+    write('insira ano: '),read(Ano),
+    write('insira mes: '),read(Mes),
+    write('insira dia: '),read(Dia),
+    write('insira hora: '), read(Hora),
+    write('insira minutos: '),read(Minutos),
+    validadata(Dia,Mes,Ano,Hora,Minutos).
 
 
 menuestatisticas :- 
-    write('1 - estafeta mais ecologico'),nl,
-    write('2 - entrega a determinado cliente'),nl,
-    write('3 - clientes servidos por um determinado estafeta'),nl,
-    write('4 - valor faturado num determinado dia'),nl,
-    write('5 - zonas com maior volume de entregas'),nl,
-    write('6 - classificacao media de um estafeta'),nl,
-    write('7 - numero total de entregas pelos diferentes meios de transporte'),nl,
-    write('8 - numero total de encomendas entregues e nao entregues num determinado intervalo de tempo'),nl,
-    write('9 - calcular o peso total transportado por estafeta num determiado dia'),nl,
-    write('10 - voltar atras').
+    writeln('1 - estafeta mais ecologico'),
+    writeln('2 - entrega a determinado cliente'),
+    writeln('3 - clientes servidos por um determinado estafeta'),
+    writeln('4 - valor faturado num determinado dia'),
+    writeln('5 - zonas com maior volume de entregas'),
+    writeln('6 - classificacao media de um estafeta'),
+    writeln('7 - numero total de entregas pelos diferentes meios de transporte'),
+    writeln('8 - numero total de encomendas entregues e nao entregues num determinado intervalo de tempo'),nl,
+    writeln('9 - calcular o peso total transportado por estafeta num determiado dia'),
+    writeln('10 - voltar atras'),
+    write('Choose: '),
+    read(X),
+    opcaoestatisticas(X). 
+
+opcaoestatisticas(6):- 
+    write('Insira o nome do estafeta').
