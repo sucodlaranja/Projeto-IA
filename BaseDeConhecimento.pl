@@ -40,5 +40,6 @@ mapa(santa_marta_de_portuzelo,meadela,5).
 mapa(meadela,darque,10).
 mapa(darque,vila_de_punhe,10).
 
-
+n_encomendas(0).
 %encomenda(id,peso,prazo,freguesia,data,estafeta,transporte,(estado-boolean entregue,a entregar)).
+encomenda(0,2.5,2,darque,(2000,2,1,1,1),joao,moto,false).

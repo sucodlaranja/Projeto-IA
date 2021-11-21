@@ -37,5 +37,5 @@ escolhetransporte(Peso,Distancia,Prazo,R) :-
   specs_transporte(R,P,Velocidade,_),
   P > Peso, Velocidade > Distancia/Prazo.
 
-
+%https://www.swi-prolog.org/pldoc/doc_for?object=date_time_stamp/2
 
