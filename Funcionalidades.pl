@@ -33,7 +33,8 @@ estafetas(Result) :- findall(A,estafeta(A,_,_),Result).
 
 %Isto so retorna o nome mas nao tenho bem a certeza que e isto que queremos
 escolhetransporte(Peso,Distancia,Prazo,R) :- 
-  transporte(R,P,Velocidade,_,false), 
+  transporte(R,false),
+  specs_transporte(R,P,Velocidade,_),
   P > Peso, Velocidade > Distancia/Prazo.
 
 

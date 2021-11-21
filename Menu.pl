@@ -13,6 +13,7 @@ menu :-
 
 %falta adicionar o algoritmo que verifica que e possivel e que verifica a data.
 %output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
+%caminho -> transporte -> estafeta.
 menuencomenda :- 
     write('Peso: '),read(Peso),
     write('prazo: '),read(Prazo),

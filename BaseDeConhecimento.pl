@@ -1,25 +1,29 @@
 %esta condicao e pra dizer ao prolog que a encomenda nao e estatica e podemos adicionar
 :- dynamic(encomenda/8).
+:- dynamic(transporte/2).
+:- dynamic(estafeta/4).
 :- dynamic(inicio/1).
 
 %-------------------------estafetas--------------------------------
-%estafeta(nome,avaliacao(5-0),ocupado) secalhar meter um id aqui e nos transportes?
-estafeta(joao,4,false).
-estafeta(jorge,3,false).
-estafeta(ruben,2,false).
-estafeta(neiva,1,false).
-
-
-
+%estafeta(nome,avaliacao total, numero de ecomendas,ocupado) secalhar meter um id aqui e nos transportes?
+estafeta(joao,0,0,false).
+estafeta(jorge,0,0,false).
+estafeta(ruben,0,0,false).
+estafeta(neiva,0,0,false).
 
 %-------------------------transporte-------------------------------
 %transporte(tipo,peso maximo, velocidade media,indice de poluicao,ocupado)
-transporte(bicicleta,5,10,1,false).
-transporte(bicicleta,5,10,1,false).
-transporte(moto,20,35,2,false).
-transporte(moto,20,35,2,false).
-transporte(carro,100,3,25,false).
-transporte(carro,100,3,25,false).
+
+specs_transporte(bicicleta,5,10,1).
+specs_transporte(moto,20,35,2).
+specs_transporte(carro,100,3,25).
+
+transporte(bicicleta,false).
+transporte(bicicleta,false).
+transporte(moto,false).
+transporte(moto,false).
+transporte(carro,false).
+transporte(carro,false).
 
 
 
@@ -37,4 +41,4 @@ mapa(meadela,darque,10).
 mapa(darque,vila_de_punhe,10).
 
 
-%encomenda(id,peso,prazo,freguesia,data,estafeta,transporte,(estado?-boolean entregue,a entregar?)).
+%encomenda(id,peso,prazo,freguesia,data,estafeta,transporte,(estado-boolean entregue,a entregar)).
