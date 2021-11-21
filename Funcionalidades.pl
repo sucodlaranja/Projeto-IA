@@ -38,4 +38,3 @@ escolhetransporte(Peso,Distancia,Prazo,R) :-
   P > Peso, Velocidade > Distancia/Prazo.
 
 %https://www.swi-prolog.org/pldoc/doc_for?object=date_time_stamp/2
-
