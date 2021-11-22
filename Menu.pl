@@ -7,13 +7,14 @@ menu :-
     writeln('4 - adicionar encomenda'),
     writeln('5 - verificar estatisticas encomendas'),
     writeln('6 - finalizar entrega'),
-    writeln('7 - Exit'),
+    writeln('7 - Dar entrega da encomenda'),
+    writeln('8 - Exit'),
     write('Choose: ').
 
 
-%falta adicionar o algoritmo que verifica que e possivel e que verifica a data.
+
 %output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
-%precisa de mudar o estado do transporte, do n_encomendas e do estafeta
+%precisa de calcular o preco.
 menuencomenda :- 
     write('Insira o seu nome: '),read(Nome),
     write('Insira o Peso: '),read(Peso),
@@ -25,7 +26,10 @@ menuencomenda :-
     escolhetransporte(Peso,Distancia,Prazo,Transporte),
     escolheestafeta(Estafeta),
     n_encomendas(Id),
-    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)).
+    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
+    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
+    write('Modo de Transporte: '),writeln(transporte),
+    write('Preco Total: '). 
     
 
 
@@ -43,6 +47,21 @@ menuestatisticas :-
     write('Choose: '),
     read(X),
     opcaoestatisticas(X). 
+
+%mudar a data para timestamp e verifica la,talvez criar um handle para isto.
+menuEntrega :-
+    write('Coloque o Id da encomenda: '),read(Id),
+    write('Coloque o ano da entrega: '),read(Ano),
+    write('Coloque o mes da entrega: '),read(Mes),
+    write('Coloque o dia da entrega: '),read(Dia),
+    write('Coloque a hora de entrega: '),read(Hora),
+    write('Coloque os minutos da entrega:'),read(Minutos),
+    encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+    %verifica se a entrega passou do praso
+    updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao).
+    
+
+
 
 opcaoestatisticas(6):- 
     write('Insira o nome do estafeta'),

@@ -35,4 +35,28 @@ take(_, [], []).
 take(N, [X|Xs], [X|Ys]) :- M is N-1, take(M, Xs, Ys).
 
 second_pair((_,B),B).
-%https://www.swi-prolog.org/pldoc/doc_for?object=date_time_stamp/2
+
+%inserir ou remover base de conhecimento
+insere(Termo) :- assert(Termo).
+insere(Termo) :- retract(Termo), !, fail.
+
+
+remove(Termo) :- retract(Termo).
+remove(Termo) :- assert(Termo), !, fail.
+
+%-------------------------Funcao auxiliar para a funcionalidade updateall, adiciona os objetos com a variavel 
+%"ocupado" para positivo e soma mais um ao id das encomendas.
+%PS MUDAR NOME DE FUNCOES
+addNewTrue(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
+	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
+
+addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Prazo,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
+	insere(transporte(Nt,false)),soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,false)),
+    insere(encomenda(Cliente,Id,Peso,Prazo,Freguesia,Data,Estafeta,Transporte,true)).
+
+soma(X,Y,R) :- R is X+Y.
+
+
+%prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
+printList([]).
+printList([H|T]) :- writeln(H),printList(T).

@@ -1,4 +1,4 @@
-:-consult('BaseDeConhecimento_TesteJorge.pl').
+:-consult('BaseDeConhecimento.pl').
 %:-consult('BaseDeConhecimento_Teste.pl').
 :-consult('auxiliar.pl').
 
@@ -80,14 +80,15 @@ peso_total_entrege(Peso_total,Time_stamp_inicial,Time_stamp_final) :-
 	aggregate_all(sum(Peso),encomenda(_,_,Peso,_,_,_,_,_,true),Peso_total).
 
 
+%DA UPDATE GERAL A FAZER A ENCOMENDA, DIZER QUE FOI ENTREGUE MUDAR DE NOME QUE TA CONFUSO
 
-%inserir ou remover base de conhecimento
-insere(Termo) :- assert(Termo).
-insere(Termo) :- retract(Termo), !, fail.
+updateallTrue(Transporte,Estafeta,Id) :- 
+	remove(Transporte),remove(Estafeta),remove(Id),addNewTrue(Transporte,Estafeta,Id).
 
 
-remove(Termo) :- retract(Termo).
-remove(Termo) :- assert(Termo), !, fail.
+updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :- 
+	remove(Transporte),remove(Estafeta),remove(Encomenda),addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
+
 
 
 %para verificar que existe caminho e ja diz a distancia
@@ -107,6 +108,9 @@ isZona(A) :- mapa(_,A,_).
 
 %Mostra todos os estafetas, e so copiar isto para os outros...
 estafetas(Result) :- findall(A,estafeta(A,_,_,_),Result).
+
+%Mostra todas as encomendas
+encomendas(Result) :- findall((C,P,F,T),encomenda(C,_,P,_,F,_,_,T,_),Result).
 
 
 %Isto so retorna o nome mas nao tenho bem a certeza que e isto que queremos

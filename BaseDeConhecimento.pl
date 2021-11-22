@@ -1,8 +1,9 @@
 %esta condicao e pra dizer ao prolog que a encomenda nao e estatica e podemos adicionar
-:- dynamic(encomenda/8).
+:- dynamic(encomenda/9).
 :- dynamic(transporte/2).
 :- dynamic(estafeta/4).
 :- dynamic(inicio/1).
+:- dynamic(n_encomendas/1).
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de ecomendas,ocupado) secalhar meter um id aqui e nos transportes?
