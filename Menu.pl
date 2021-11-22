@@ -13,17 +13,20 @@ menu :-
 
 %falta adicionar o algoritmo que verifica que e possivel e que verifica a data.
 %output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
-%caminho -> transporte -> estafeta.
+%precisa de mudar o estado do transporte, do n_encomendas e do estafeta
 menuencomenda :- 
-    write('Peso: '),read(Peso),
-    write('prazo: '),read(Prazo),
-    write('freguesia:'),read(Freguesia),
-    write('insira ano: '),read(Ano),
-    write('insira mes: '),read(Mes),
-    write('insira dia: '),read(Dia),
-    write('insira hora: '), read(Hora),
-    write('insira minutos: '),read(Minutos),
-    validadata(Dia,Mes,Ano,Hora,Minutos).
+    write('Insira o seu nome: '),read(Nome),
+    write('Insira o Peso: '),read(Peso),
+    write('Insira o Prazo: '),read(Prazo),
+    write('Insira o Freguesia: '),read(Freguesia),
+    get_time(TimeStamp),
+    stamp_date_time(TimeStamp,_, 0),
+    caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
+    escolhetransporte(Peso,Distancia,Prazo,Transporte),
+    escolheestafeta(Estafeta),
+    n_encomendas(Id),
+    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)).
+    
 
 
 menuestatisticas :- 

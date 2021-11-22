@@ -115,4 +115,7 @@ escolhetransporte(Peso,Distancia,Prazo,R) :-
   specs_transporte(R,P,Velocidade,_),
   P > Peso, Velocidade > Distancia/Prazo.
 
-%https://www.swi-prolog.org/pldoc/doc_for?object=date_time_stamp/2
+
+%Isto e so a base, precisa de ter em conta a avaliacao
+escolheestafeta(R):- estafeta(R,_,_,false).
+
