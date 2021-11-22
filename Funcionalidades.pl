@@ -115,11 +115,15 @@ encomendas(Result) :- findall((C,P,F,T),encomenda(C,_,P,_,F,_,_,T,_),Result).
 
 %Isto so retorna o nome mas nao tenho bem a certeza que e isto que queremos
 escolhetransporte(Peso,Distancia,Prazo,R) :- 
-  transporte(R,false),
-  specs_transporte(R,P,Velocidade,_),
-  P > Peso, Velocidade > Distancia/Prazo.
+  findall((X,Indice),(transporte(X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
+  escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
+escolhetransporte_aux(H,[(H,_)],_,_,_) :- !.
+escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :- 
+	specs_transporte(Nome,P,Velocidade,_),
+	P > Peso, Velocidade > (Distancia/Prazo),!.
+escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
 
 %Isto e so a base, precisa de ter em conta a avaliacao
-escolheestafeta(R):- estafeta(R,_,_,false).
+escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,R).
 

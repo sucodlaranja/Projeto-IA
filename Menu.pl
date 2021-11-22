@@ -14,7 +14,7 @@ menu :-
 
 
 %output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
-%precisa de calcular o preco.
+%ta tudo feito o que esta escrito, so falta calcular o preco
 menuencomenda :- 
     write('Insira o seu nome: '),read(Nome),
     write('Insira o Peso: '),read(Peso),
@@ -24,13 +24,28 @@ menuencomenda :-
     stamp_date_time(TimeStamp,_, 0),
     caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
     escolhetransporte(Peso,Distancia,Prazo,Transporte),
-    escolheestafeta(Estafeta),
+    escolheestafeta([H|T]),first(H,Estafeta),
     n_encomendas(Id),
     insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
     write('A sua encomenda sera entregue por: '),writeln(Estafeta),
     write('Modo de Transporte: '),writeln(transporte),
     write('Preco Total: '). 
-    
+
+
+%mudar a data para timestamp e verifica la,talvez criar um handle para isto.
+%criar um handler para o caso da (data+pRAZO NAO SE confirmar)
+menuEntrega :-
+    write('Coloque o Id da encomenda: '),read(Id),
+    write('Coloque o ano da entrega: '),read(Ano),
+    write('Coloque o mes da entrega: '),read(Mes),
+    write('Coloque o dia da entrega: '),read(Dia),
+    write('Coloque a hora de entrega: '),read(Hora),
+    write('Coloque os minutos da entrega: '),read(Minutos),
+    write('Coloque a avaliacao da entrega: '),read(Avaliacao),
+    encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp),
+    (Data+Prazo) > TimeStamp,
+    updateallFalse(Transporte,Estafeta,encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),Avaliacao).
 
 
 menuestatisticas :- 
@@ -48,17 +63,6 @@ menuestatisticas :-
     read(X),
     opcaoestatisticas(X). 
 
-%mudar a data para timestamp e verifica la,talvez criar um handle para isto.
-menuEntrega :-
-    write('Coloque o Id da encomenda: '),read(Id),
-    write('Coloque o ano da entrega: '),read(Ano),
-    write('Coloque o mes da entrega: '),read(Mes),
-    write('Coloque o dia da entrega: '),read(Dia),
-    write('Coloque a hora de entrega: '),read(Hora),
-    write('Coloque os minutos da entrega:'),read(Minutos),
-    encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
-    %verifica se a entrega passou do praso
-    updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao).
     
 
 

@@ -17,7 +17,7 @@ estafeta(neiva,0,0,false).
 
 specs_transporte(bicicleta,5,10,1).
 specs_transporte(moto,20,35,2).
-specs_transporte(carro,100,3,25).
+specs_transporte(carro,100,3,3).
 
 transporte(bicicleta,false).
 transporte(bicicleta,false).

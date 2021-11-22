@@ -56,7 +56,13 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 
 soma(X,Y,R) :- R is X+Y.
 
+divisao(_,0,0) :- !.
+divisao(0,_,0) :- !.
+divisao(A,B,R) :- R is (A/B).
+
 
 %prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
 printList([]).
 printList([H|T]) :- writeln(H),printList(T).
+
+first((H,_),H).
