@@ -6,10 +6,10 @@
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de ecomendas,ocupado) secalhar meter um id aqui e nos transportes?
-estafeta(neiva,0,0,false).
-estafeta(jorge,0,1,false).
-estafeta(ruben,0,2,false).
-estafeta(joao,0,3,false).
+estafeta(neiva,20,5,false).
+estafeta(jorge,10,1,false).
+estafeta(ruben,90,10,false).
+estafeta(joao,3,50,false).
 
 %-------------------------transporte-------------------------------
 %transporte(tipo,peso maximo, velocidade media,indice de poluicao)

@@ -46,8 +46,39 @@ zonas_com_mais_volume(N,Top_n_zones) :-
 volume_zona(Zona,(Volume,Zona)) :-
 	aggregate_all(count,encomenda(_,_,_,_,Zona,_,_,_,_),Volume).
 
-%pergunta 6 das estatisticas not sure se é write ou de outra forma
-mediaestafeta(estafeta(_,Y,_)) :- write(Y).
+/* pergunta 6
+	Calcular a classificação média de satisfação de cliente para um determinado estafeta.
+*/
+mediaestafeta(Estafeta,Media) :- 
+	estafeta(Estafeta,Total,Numero,_),
+	Numero =\= 0,
+	Media is Total/ Numero.
+
+/* pergunta 7
+	identificar o número total de entregas pelos diferentes meios de transporte,
+	num determinado intervalo de tempo.
+*/
+entregas_meio_transporte(Lista) :- 
+	findall(Meio_transporte,transporte(Meio_transporte,_),Lista_mt_dup),
+	sort(Lista_mt_dup,Lista_mt),
+	maplist(quantas_vezes_usou_transporte,Lista_mt,Lista).
+
+quantas_vezes_usou_transporte(Meio_transporte,(Vezes_usado,Meio_transporte)) :-
+	aggregate_all(count,encomenda(_,_,_,_,_,_,_,Meio_transporte,true),Vezes_usado).
+
+/* pergunta 8
+	Identificar o número total de entregas pelos estafetas, num determinado
+intervalo de tempo.
+*/
+numero_total_entregas(Numero_total_entregas) :-
+	aggregate_all(count,encomenda(_,_,_,_,_,_,_,_,true),Numero_total_entregas).
+
+/* pergunta 10
+	Calcular o peso total transportado por estafeta num determinado dia.
+*/
+peso_total_entrege(Peso_total,Time_stamp_inicial,Time_stamp_final) :-
+	aggregate_all(sum(Peso),encomenda(_,_,Peso,_,_,_,_,_,true),Peso_total).
+
 
 
 %inserir ou remover base de conhecimento
