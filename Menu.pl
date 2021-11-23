@@ -1,4 +1,8 @@
 :- consult('Funcionalidades.pl').
+
+/****************************************************************
+ * Menus
+****************************************************************/
 menu :-
     writeln('--------------------------------MENU-----------------------------------'),nl,
     writeln('1 - consultar os estafetas'),
@@ -6,10 +10,10 @@ menu :-
     writeln('3 - consultar transporte'),
     writeln('4 - adicionar encomenda'),
     writeln('5 - verificar estatisticas encomendas'),
-    writeln('6 - finalizar entrega'),
-    writeln('7 - Dar entrega da encomenda'),
-    writeln('8 - Exit'),
+    writeln('6 - Dar entrega da encomenda'),
+    writeln('7 - Exit'),
     write('Choose: ').
+
 
 
 
@@ -20,19 +24,7 @@ menuencomenda :-
     write('Insira o Peso: '),read(Peso),
     write('Insira o Prazo: '),read(Prazo),
     write('Insira o Freguesia: '),read(Freguesia),
-    get_time(TimeStamp),
-    stamp_date_time(TimeStamp,_, 0),
-    caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
-    escolhetransporte(Peso,Distancia,Prazo,Transporte),
-    escolheestafeta(Estafeta),
-    n_encomendas(Id),
-    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
-    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id)),
-    calculapreco(Distancia,Peso,Prazo,Transporte,Preco),
-    write('O id da sua encomenda é: '),writeln(Id),
-    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
-    write('Modo de Transporte: '),writeln(Transporte),
-    write('Preco Total: '),writeln(Preco).
+    fazEncomendaHandler(Nome,Peso,Prazo,Freguesia).
 
 
 %mudar a data para timestamp e verifica la,talvez criar um handle para isto.
@@ -64,7 +56,9 @@ menuestatisticas :-
 
     
 
-
+/****************************************************************
+ * Opcoes estatisticas
+****************************************************************/
 
 opcaoestatisticas(6):- 
     write('Insira o nome do estafeta'),

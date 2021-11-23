@@ -3,7 +3,9 @@
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
 
-%valida a data da encomenda
+/****************************************************************
+ * Operacoes sobre datas
+****************************************************************/
 validadata(date(Y,2,D,H,Min,_,_,_,_)) :- 
     Y mod 4 =\= 0,
     D >=1,D=<29,
@@ -31,13 +33,45 @@ validadata(date(Y,M,D,H,Min,_,_,_,_)) :-
     H>= 0, H=<23,
     Min>=1,Min=<59.
 
+
+visual_data(Timestamp) :-
+    stamp_date_time(Timestamp,date(Ano,Mes,Dia,Hora,Minuto,_,_,_,_),0),
+    write(Ano),write('/'),write(Mes),write('/'),write(Dia),write(' '),write(Hora),write(':'),write(Minuto).
+
+/****************************************************************
+ * Operacoes sobre listas
+****************************************************************/
 take(N, _, Xs) :- N =< 0, !, N =:= 0, Xs = [].
 take(_, [], []).
 take(N, [X|Xs], [X|Ys]) :- M is N-1, take(M, Xs, Ys).
 
-second_pair((_,B),B).
 
-%inserir ou remover base de conhecimento
+%prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
+printList([]).
+printList([H|T]) :- writeln(H),printList(T).
+
+
+
+printEncomendas([]).
+printEncomendas([(C,P,F,T,Time)]) :- write(C),write(','),write(P),
+    write(','),write(F),write(','),
+    write(T),write(','),
+    visual_data(Time).
+
+printEncomendas([(C,P,F,T,Time)|T]) :- write(C),write(','),write(P),
+    write(','),write(F),write(','),
+    write(T),write(','),
+    visual_data(Time),printEncomendas(T).
+
+/****************************************************************
+ * Operacoes sobre Pares
+****************************************************************/
+second_pair((_,B),B).
+first((H,_),H).
+
+/****************************************************************
+ * Operacoes sobre base de Conhecimento
+****************************************************************/
 insere(Termo) :- assert(Termo).
 insere(Termo) :- retract(Termo), !, fail.
 
@@ -57,14 +91,10 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 
 
 
-%prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
-printList([]).
-printList([H|T]) :- writeln(H),printList(T).
 
-first((H,_),H).
+
 
 %Calcula o preco da encomenda tendo em conta a distancia,peso, prazo e meio de transporte.
-
 calculapreco(Distancia,Peso,Prazo,bicicleta,R) :- 
 	preco(PD,PPeso,PPrazo,PBicicleta,_,_),
 	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PBicicleta).
@@ -77,10 +107,22 @@ calculapreco(Distancia,Peso,Prazo,carro,R) :-
 	preco(PD,PPeso,PPrazo,_,_,PCarro),
 	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PCarro).
 
+%para verificar que existe caminho e ja diz a distancia
+adjacente(A,B,Km) :- mapa(A,B,Km).
+adjacente(A,B,Km) :- mapa(B,A,Km).
 
-%Operacoes aritmeticas
+
+
+/****************************************************************
+ * Operacoes Aritmeticas
+****************************************************************/
 soma(X,Y,R) :- R is X+Y.
 
 divisao(_,0,0) :- !.
 divisao(0,_,0) :- !.
 divisao(A,B,R) :- R is (A/B).
+
+/****************************************************************
+ * Headers
+****************************************************************/
+encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data').

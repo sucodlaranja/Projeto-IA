@@ -88,11 +88,7 @@ updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :-
 	remove(Transporte),remove(Estafeta),remove(Encomenda),addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
 
 
-
-%para verificar que existe caminho e ja diz a distancia
-adjacente(A,B,Km) :- mapa(A,B,Km).
-adjacente(A,B,Km) :- mapa(B,A,Km).
-
+%Calcula se existe caminho do ponto A ate ao B
 caminho(A,B,P,Km) :- caminho1(A,[B],P,Km).
 caminho1(A,[A|P1],[A|P1],0).
 caminho1(A,[Y|P1],P,K1) :- 
@@ -108,30 +104,39 @@ isZona(A) :- mapa(_,A,_).
 estafetas(Result) :- findall(A,estafeta(A,_,_,_),Result).
 
 %Mostra todas as encomendas
-encomendas(Result) :- findall((C,P,F,T),encomenda(C,_,P,_,F,_,_,T,_),Result).
+encomendas(Result) :- findall((C,P,F,T,Time),(encomenda(C,_,P,_,F,Time,_,T,_)),Result).
 
-
-%Isto so retorna o nome mas nao tenho bem a certeza que e isto que queremos
+/*
+	====================================================================================================
+	Escolhe o transporte dando prioridade aos que têm menos indice de poluicao,
+	Calcula se o transporte aguenta o peso da encomenda e consegue chegar ao local no prazo estipulado
+	====================================================================================================
+*/
 escolhetransporte(Peso,Distancia,Prazo,R) :- 
   findall((X,Indice),(transporte(X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
   escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
-escolhetransporte_aux(H,[(H,_)],_,_,_) :- !.
+escolhetransporte_aux(H,[(H,_)],Peso,Distancia,Prazo) :- 
+	specs_transporte(H,P,Velocidade,_),
+	P >= Peso, Velocidade >= (Distancia/Prazo),!.
 escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :- 
 	specs_transporte(Nome,P,Velocidade,_),
-	P > Peso, Velocidade > (Distancia/Prazo),!.
+	P >= Peso, Velocidade >= (Distancia/Prazo),!.
 escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
 
-%Isto e so a base, precisa de ter em conta a avaliacao
+
+%Escolhe o estafeta com base na sua avaliacao
 escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),first(H,R).
 
 
 
 
-
-%ns se devo por writes aqui tho
-%handler do menu entrega encomenda, recebe os dados fornecidos pelo estafeta que entregou a encomenda
-%calcula se ha atraso na entrega e atualiza os estados do transporte e do estafeta.
+/*	
+	======================================================================================================
+	handler do menu entrega encomenda, recebe os dados fornecidos pelo estafeta que entregou a encomenda
+	calcula se ha atraso na entrega e atualiza os estados do transporte e do estafeta.
+	======================================================================================================
+*/
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
@@ -141,6 +146,7 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
     (Data+Prazo) < TimeStamp,divisao(Avaliacao,2,NewAV),
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),NewAV),
@@ -148,3 +154,26 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 
 
 
+/* 
+	================================================================================================
+	Handler que trata da criacao da encomenda e da update dos estados do transporte,estafetas
+	Calcula se existe caminho, se existe transporte disponivel por indice de poluicao e calcula o 
+	estafeta pela sua avaliacao
+	================================================================================================
+*/
+fazEncomendaHandler(Nome,Peso,Prazo,Freguesia) :-
+	get_time(TimeStamp),
+    stamp_date_time(TimeStamp,_, 0),
+    caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
+    escolhetransporte(Peso,Distancia,Prazo,Transporte),
+    escolheestafeta(Estafeta),
+    n_encomendas(Id),
+    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
+    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id)),
+    calculapreco(Distancia,Peso,Prazo,Transporte,Preco),!,
+    write('O id da sua encomenda é: '),writeln(Id),
+    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
+    write('Modo de Transporte: '),writeln(Transporte),
+    write('Preco Total: '),writeln(Preco).
+
+fazEncomendaHandler(_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').

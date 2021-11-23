@@ -46,5 +46,5 @@ preco(0.5,0.5,1,1,2,3).
 
 n_encomendas(1).
 %encomenda(cliente,id,peso,prazo,freguesia,data(timestamp(hora)),estafeta,transporte,(estado-boolean entregue,a entregar)).
-encomenda(jj,0,2.5,2,darque,454907.11126391427,joao,bicicleta,false).
+encomenda(jj,0,2.5,2,darque,1637705544.8286242,joao,bicicleta,false).
 
