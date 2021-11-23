@@ -81,10 +81,8 @@ peso_total_entrege(Peso_total,Time_stamp_inicial,Time_stamp_final) :-
 
 
 %DA UPDATE GERAL A FAZER A ENCOMENDA, DIZER QUE FOI ENTREGUE MUDAR DE NOME QUE TA CONFUSO
-
 updateallTrue(Transporte,Estafeta,Id) :- 
 	remove(Transporte),remove(Estafeta),remove(Id),addNewTrue(Transporte,Estafeta,Id).
-
 
 updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :- 
 	remove(Transporte),remove(Estafeta),remove(Encomenda),addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
@@ -125,5 +123,28 @@ escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :-
 escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
 
 %Isto e so a base, precisa de ter em conta a avaliacao
-escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,R).
+escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),first(H,R).
+
+
+
+
+
+%ns se devo por writes aqui tho
+%handler do menu entrega encomenda, recebe os dados fornecidos pelo estafeta que entregou a encomenda
+%calcula se ha atraso na entrega e atualiza os estados do transporte e do estafeta.
+entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
+	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
+    (Data+Prazo) >= TimeStamp,
+    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),Avaliacao),
+	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao).
+
+entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
+	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
+    (Data+Prazo) < TimeStamp,divisao(Avaliacao,2,NewAV),
+    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),NewAV),
+	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV).
+
+
 

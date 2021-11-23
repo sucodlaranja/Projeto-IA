@@ -24,12 +24,15 @@ menuencomenda :-
     stamp_date_time(TimeStamp,_, 0),
     caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
     escolhetransporte(Peso,Distancia,Prazo,Transporte),
-    escolheestafeta([H|T]),first(H,Estafeta),
+    escolheestafeta(Estafeta),
     n_encomendas(Id),
     insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
+    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id)),
+    calculapreco(Distancia,Peso,Prazo,Transporte,Preco),
+    write('O id da sua encomenda é: '),writeln(Id),
     write('A sua encomenda sera entregue por: '),writeln(Estafeta),
-    write('Modo de Transporte: '),writeln(transporte),
-    write('Preco Total: '). 
+    write('Modo de Transporte: '),writeln(Transporte),
+    write('Preco Total: '),writeln(Preco).
 
 
 %mudar a data para timestamp e verifica la,talvez criar um handle para isto.
@@ -42,11 +45,7 @@ menuEntrega :-
     write('Coloque a hora de entrega: '),read(Hora),
     write('Coloque os minutos da entrega: '),read(Minutos),
     write('Coloque a avaliacao da entrega: '),read(Avaliacao),
-    encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
-    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp),
-    (Data+Prazo) > TimeStamp,
-    updateallFalse(Transporte,Estafeta,encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),Avaliacao).
-
+    entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao).
 
 menuestatisticas :- 
     writeln('1 - estafeta mais ecologico'),

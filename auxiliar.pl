@@ -1,3 +1,4 @@
+:- consult('BaseDeConhecimento.pl').
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
@@ -54,11 +55,6 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 	insere(transporte(Nt,false)),soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,false)),
     insere(encomenda(Cliente,Id,Peso,Prazo,Freguesia,Data,Estafeta,Transporte,true)).
 
-soma(X,Y,R) :- R is X+Y.
-
-divisao(_,0,0) :- !.
-divisao(0,_,0) :- !.
-divisao(A,B,R) :- R is (A/B).
 
 
 %prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
@@ -66,3 +62,25 @@ printList([]).
 printList([H|T]) :- writeln(H),printList(T).
 
 first((H,_),H).
+
+%Calcula o preco da encomenda tendo em conta a distancia,peso, prazo e meio de transporte.
+
+calculapreco(Distancia,Peso,Prazo,bicicleta,R) :- 
+	preco(PD,PPeso,PPrazo,PBicicleta,_,_),
+	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PBicicleta).
+
+calculapreco(Distancia,Peso,Prazo,moto,R) :- 
+	preco(PD,PPeso,PPrazo,_,PMoto,_),
+	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PMoto).
+
+calculapreco(Distancia,Peso,Prazo,carro,R) :- 
+	preco(PD,PPeso,PPrazo,_,_,PCarro),
+	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PCarro).
+
+
+%Operacoes aritmeticas
+soma(X,Y,R) :- R is X+Y.
+
+divisao(_,0,0) :- !.
+divisao(0,_,0) :- !.
+divisao(A,B,R) :- R is (A/B).
