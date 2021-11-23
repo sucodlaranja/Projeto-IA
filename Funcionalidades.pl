@@ -16,17 +16,31 @@ estafeta_mais_ecologico(Mais_ecologico) :-
    gera o par (indice de poluição por encomenda,estafeta).*/ 
 quantas_vezes_usou(Nome_estafeta,(Pol_media,Nome_estafeta)) :-
 	aggregate_all((sum(Ind_poluicao),count),
-		(specs_transporte(Meio_transporte,_,_,Ind_poluicao),encomenda(_,_,_,_,_,Nome_estafeta,Meio_transporte,true)),
+		(specs_transporte(Meio_transporte,_,_,Ind_poluicao),encomenda(_,_,_,_,_,_,_,Nome_estafeta,Meio_transporte,true)),
 		(Ind_poluicao_total,Num_encomendas)),
 		Pol_media is Ind_poluicao_total/Num_encomendas.
+
+/* pergunta 2
+	Identificar que estafetas entregaram determinada(s) encomenda(s) a um determinado cliente.
+*/
+estafetas_que_servem(Cliente,Lista) :-
+	findall((Estafeta,Id),encomenda(Cliente,Id,_,_,_,_,_,Estafeta,_,_),Lista).
 
 /* pergunta 3
 	Identificar os clientes servidos por um determinado estafeta.
 	Fazemos a lista dos clinetes servidos pelo estafeta e removemos duplicados.
 	*/
 clientes_servidos(Estafeta,Lista) :-
-	findall(Cliente,encomenda(Cliente,_,_,_,_,_,Estafeta,_,_),Lista_wdup),
+	findall(Cliente,encomenda(Cliente,_,_,_,_,_,_,Estafeta,_,_),Lista_wdup),
 	sort(Lista_wdup,Lista). 
+
+/* pergunta 4
+	Calcular o valor faturado pela Green Distribution num determinado dia.
+*/
+numero_total_faturado(Time_stamp_inicial,Time_stamp_final,Valor_faturado) :-
+	aggregate_all(sum(Preco),
+		(encomenda(_,_,_,_,Preco,_,Time,_,_,true),between(Time_stamp_inicial,Time_stamp_final,Time)),
+		Valor_faturado).
 
 /* pergunta 5
 	Identificar quais as zonas (e.g., rua ou freguesia) com maior volume de
@@ -44,7 +58,7 @@ zonas_com_mais_volume(N,Top_n_zones) :-
 /* função auxiliar a pergunta 5, que dado um nome de uma zona calcula o numero de vezes que foi usada,
    gera o par (numero de vezes que foi usada,zona).*/ 
 volume_zona(Zona,(Volume,Zona)) :-
-	aggregate_all(count,encomenda(_,_,_,_,Zona,_,_,_,_),Volume).
+	aggregate_all(count,encomenda(_,_,_,_,_,Zona,_,_,_,_),Volume).
 
 /* pergunta 6
 	Calcular a classificação média de satisfação de cliente para um determinado estafeta.
@@ -58,27 +72,37 @@ mediaestafeta(Estafeta,Media) :-
 	identificar o número total de entregas pelos diferentes meios de transporte,
 	num determinado intervalo de tempo.
 */
-entregas_meio_transporte(Lista) :- 
+entregas_meio_transporte(Time_stamp_inicial,Time_stamp_final,Lista) :- 
 	findall(Meio_transporte,transporte(Meio_transporte,_),Lista_mt_dup),
 	sort(Lista_mt_dup,Lista_mt),
-	maplist(quantas_vezes_usou_transporte,Lista_mt,Lista).
+	maplist(quantas_vezes_usou_transporte(Time_stamp_inicial,Time_stamp_final),Lista_mt,Lista).
 
-quantas_vezes_usou_transporte(Meio_transporte,(Vezes_usado,Meio_transporte)) :-
-	aggregate_all(count,encomenda(_,_,_,_,_,_,_,Meio_transporte,true),Vezes_usado).
+quantas_vezes_usou_transporte(Time_stamp_inicial,Time_stamp_final,Meio_transporte,(Vezes_usado,Meio_transporte)) :-
+	aggregate_all(count,
+		(encomenda(_,_,_,_,_,_,Time,_,Meio_transporte,true),between(Time_stamp_inicial,Time_stamp_final,Time)),
+		Vezes_usado).
 
 /* pergunta 8
 	Identificar o número total de entregas pelos estafetas, num determinado
 intervalo de tempo.
 */
-numero_total_entregas(Numero_total_entregas) :-
-	aggregate_all(count,encomenda(_,_,_,_,_,_,_,_,true),Numero_total_entregas).
+numero_total_entregas(Time_stamp_inicial,Time_stamp_final,Numero_total_entregas) :-
+	aggregate_all(count,
+		(encomenda(_,_,_,_,_,_,Time,_,_,true),between(Time_stamp_inicial,Time_stamp_final,Time)),
+		Numero_total_entregas).
+
+/* pergunta 9
+	Calcular o número de encomendas entregues e não entregues pela Green
+		Distribution, num determinado período de tempo.
+*/
 
 /* pergunta 10
 	Calcular o peso total transportado por estafeta num determinado dia.
 */
-peso_total_entrege(Peso_total,Time_stamp_inicial,Time_stamp_final) :-
-	aggregate_all(sum(Peso),encomenda(_,_,Peso,_,_,_,_,_,true),Peso_total).
-
+peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total) :-
+	aggregate_all(sum(Peso),
+		(encomenda(_,_,_,_,Peso,_,Time,_,_,true),between(Time_stamp_inicial,Time_stamp_final,Time)),
+		Peso_total).
 
 
 %inserir ou remover base de conhecimento
