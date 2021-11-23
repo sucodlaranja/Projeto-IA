@@ -1,4 +1,8 @@
 :- consult('Funcionalidades.pl').
+
+/****************************************************************
+ * Menus
+****************************************************************/
 menu :-
     writeln('--------------------------------MENU-----------------------------------'),nl,
     writeln('1 - consultar os estafetas'),
@@ -6,25 +10,34 @@ menu :-
     writeln('3 - consultar transporte'),
     writeln('4 - adicionar encomenda'),
     writeln('5 - verificar estatisticas encomendas'),
-    writeln('6 - finalizar entrega'),
+    writeln('6 - Dar entrega da encomenda'),
     writeln('7 - Exit'),
     write('Choose: ').
 
 
-%falta adicionar o algoritmo que verifica que e possivel e que verifica a data.
-%output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
-%caminho -> transporte -> estafeta.
-menuencomenda :- 
-    write('Peso: '),read(Peso),
-    write('prazo: '),read(Prazo),
-    write('freguesia:'),read(Freguesia),
-    write('insira ano: '),read(Ano),
-    write('insira mes: '),read(Mes),
-    write('insira dia: '),read(Dia),
-    write('insira hora: '), read(Hora),
-    write('insira minutos: '),read(Minutos),
-    validadata(Dia,Mes,Ano,Hora,Minutos).
 
+
+%output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
+%ta tudo feito o que esta escrito, so falta calcular o preco
+menuencomenda :- 
+    write('Insira o seu nome: '),read(Nome),
+    write('Insira o Peso: '),read(Peso),
+    write('Insira o Prazo: '),read(Prazo),
+    write('Insira o Freguesia: '),read(Freguesia),
+    fazEncomendaHandler(Nome,Peso,Prazo,Freguesia).
+
+
+%mudar a data para timestamp e verifica la,talvez criar um handle para isto.
+%criar um handler para o caso da (data+pRAZO NAO SE confirmar)
+menuEntrega :-
+    write('Coloque o Id da encomenda: '),read(Id),
+    write('Coloque o ano da entrega: '),read(Ano),
+    write('Coloque o mes da entrega: '),read(Mes),
+    write('Coloque o dia da entrega: '),read(Dia),
+    write('Coloque a hora de entrega: '),read(Hora),
+    write('Coloque os minutos da entrega: '),read(Minutos),
+    write('Coloque a avaliacao da entrega: '),read(Avaliacao),
+    entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao).
 
 menuestatisticas :- 
     writeln('1 - estafeta mais ecologico'),
@@ -40,6 +53,12 @@ menuestatisticas :-
     write('Choose: '),
     read(X),
     opcaoestatisticas(X). 
+
+    
+
+/****************************************************************
+ * Opcoes estatisticas
+****************************************************************/
 
 opcaoestatisticas(6):- 
     write('Insira o nome do estafeta'),

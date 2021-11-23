@@ -1,4 +1,4 @@
-:-consult('BaseDeConhecimento_TesteJorge.pl').
+:-consult('BaseDeConhecimento.pl').
 %:-consult('BaseDeConhecimento_Teste.pl').
 :-consult('auxiliar.pl').
 
@@ -104,20 +104,15 @@ peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total) :-
 		(encomenda(_,_,_,_,Peso,_,Time,_,_,true),between(Time_stamp_inicial,Time_stamp_final,Time)),
 		Peso_total).
 
+%DA UPDATE GERAL A FAZER A ENCOMENDA, DIZER QUE FOI ENTREGUE MUDAR DE NOME QUE TA CONFUSO
+updateallTrue(Transporte,Estafeta,Id) :- 
+	remove(Transporte),remove(Estafeta),remove(Id),addNewTrue(Transporte,Estafeta,Id).
 
-%inserir ou remover base de conhecimento
-insere(Termo) :- assert(Termo).
-insere(Termo) :- retract(Termo), !, fail.
-
-
-remove(Termo) :- retract(Termo).
-remove(Termo) :- assert(Termo), !, fail.
+updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :- 
+	remove(Transporte),remove(Estafeta),remove(Encomenda),addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
 
 
-%para verificar que existe caminho e ja diz a distancia
-adjacente(A,B,Km) :- mapa(A,B,Km).
-adjacente(A,B,Km) :- mapa(B,A,Km).
-
+%Calcula se existe caminho do ponto A ate ao B
 caminho(A,B,P,Km) :- caminho1(A,[B],P,Km).
 caminho1(A,[A|P1],[A|P1],0).
 caminho1(A,[Y|P1],P,K1) :- 
@@ -132,11 +127,77 @@ isZona(A) :- mapa(_,A,_).
 %Mostra todos os estafetas, e so copiar isto para os outros...
 estafetas(Result) :- findall(A,estafeta(A,_,_,_),Result).
 
+%Mostra todas as encomendas
+encomendas(Result) :- findall((C,P,F,T,Time),(encomenda(C,_,P,_,F,Time,_,T,_)),Result).
 
-%Isto so retorna o nome mas nao tenho bem a certeza que e isto que queremos
+/*
+	====================================================================================================
+	Escolhe o transporte dando prioridade aos que têm menos indice de poluicao,
+	Calcula se o transporte aguenta o peso da encomenda e consegue chegar ao local no prazo estipulado
+	====================================================================================================
+*/
 escolhetransporte(Peso,Distancia,Prazo,R) :- 
-  transporte(R,false),
-  specs_transporte(R,P,Velocidade,_),
-  P > Peso, Velocidade > Distancia/Prazo.
+  findall((X,Indice),(transporte(X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
+  escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
-%https://www.swi-prolog.org/pldoc/doc_for?object=date_time_stamp/2
+escolhetransporte_aux(H,[(H,_)],Peso,Distancia,Prazo) :- 
+	specs_transporte(H,P,Velocidade,_),
+	P >= Peso, Velocidade >= (Distancia/Prazo),!.
+escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :- 
+	specs_transporte(Nome,P,Velocidade,_),
+	P >= Peso, Velocidade >= (Distancia/Prazo),!.
+escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
+
+
+%Escolhe o estafeta com base na sua avaliacao
+escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),first(H,R).
+
+
+
+
+/*	
+	======================================================================================================
+	handler do menu entrega encomenda, recebe os dados fornecidos pelo estafeta que entregou a encomenda
+	calcula se ha atraso na entrega e atualiza os estados do transporte e do estafeta.
+	======================================================================================================
+*/
+entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
+	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
+    (Data+Prazo) >= TimeStamp,
+    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),Avaliacao),
+	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao).
+
+entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
+	encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),
+	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
+    (Data+Prazo) < TimeStamp,divisao(Avaliacao,2,NewAV),
+    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,Prazo,_,Data,Estafeta,Transporte,False),NewAV),
+	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV).
+
+
+
+/* 
+	================================================================================================
+	Handler que trata da criacao da encomenda e da update dos estados do transporte,estafetas
+	Calcula se existe caminho, se existe transporte disponivel por indice de poluicao e calcula o 
+	estafeta pela sua avaliacao
+	================================================================================================
+*/
+fazEncomendaHandler(Nome,Peso,Prazo,Freguesia) :-
+	get_time(TimeStamp),
+    stamp_date_time(TimeStamp,_, 0),
+    caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
+    escolhetransporte(Peso,Distancia,Prazo,Transporte),
+    escolheestafeta(Estafeta),
+    n_encomendas(Id),
+    insere(encomenda(Nome,Id,Peso,Prazo,Freguesia,TimeStamp,Estafeta,Transporte,false)),
+    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id)),
+    calculapreco(Distancia,Peso,Prazo,Transporte,Preco),!,
+    write('O id da sua encomenda é: '),writeln(Id),
+    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
+    write('Modo de Transporte: '),writeln(Transporte),
+    write('Preco Total: '),writeln(Preco).
+
+fazEncomendaHandler(_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
