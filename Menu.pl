@@ -1,4 +1,5 @@
 :- consult('Funcionalidades.pl').
+:- consult('queries.pl').
 
 /****************************************************************
  * Menus
@@ -22,9 +23,10 @@ menu :-
 menuencomenda :- 
     write('Insira o seu nome: '),read(Nome),
     write('Insira o Peso: '),read(Peso),
+    write('Insira o Volume: '),read(Volume),
     write('Insira o Prazo: '),read(Prazo),
     write('Insira o Freguesia: '),read(Freguesia),
-    fazEncomendaHandler(Nome,Peso,Prazo,Freguesia).
+    fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia).
 
 
 %mudar a data para timestamp e verifica la,talvez criar um handle para isto.

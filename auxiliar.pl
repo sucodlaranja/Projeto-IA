@@ -1,4 +1,5 @@
-:- consult('BaseDeConhecimento.pl').
+%:- consult('BaseDeConhecimento.pl').
+:- consult('BaseDeConhecimento_TesteJorge.pl').
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
@@ -52,15 +53,10 @@ printList([H|T]) :- writeln(H),printList(T).
 
 
 printEncomendas([]).
-printEncomendas([(C,P,F,T,Time)]) :- write(C),write(','),write(P),
+printEncomendas([(C,P,F,T,Time)|Tail]) :- write(C),write(','),write(P),
     write(','),write(F),write(','),
     write(T),write(','),
-    visual_data(Time).
-
-printEncomendas([(C,P,F,T,Time)|T]) :- write(C),write(','),write(P),
-    write(','),write(F),write(','),
-    write(T),write(','),
-    visual_data(Time),printEncomendas(T).
+    visual_data(Time),nl,printEncomendas(Tail).
 
 /****************************************************************
  * Operacoes sobre Pares
@@ -84,9 +80,9 @@ remove(Termo) :- assert(Termo), !, fail.
 addNewTrue(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
 	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
 
-addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Prazo,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
+addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
 	insere(transporte(Nt,false)),soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,false)),
-    insere(encomenda(Cliente,Id,Peso,Prazo,Freguesia,Data,Estafeta,Transporte,true)).
+    insere(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,true)).
 
 
 
@@ -94,15 +90,15 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 
 
 %Calcula o preco da encomenda tendo em conta a distancia,peso, prazo e meio de transporte.
-calculapreco(Distancia,Peso,Prazo,bicicleta,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,bicicleta,R) :- 
 	preco(PD,PPeso,PPrazo,PBicicleta,_,_),
 	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PBicicleta).
 
-calculapreco(Distancia,Peso,Prazo,moto,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,moto,R) :- 
 	preco(PD,PPeso,PPrazo,_,PMoto,_),
 	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PMoto).
 
-calculapreco(Distancia,Peso,Prazo,carro,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,carro,R) :- 
 	preco(PD,PPeso,PPrazo,_,_,PCarro),
 	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PCarro).
 
