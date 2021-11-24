@@ -96,4 +96,4 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia) :-
     write('Modo de Transporte: '),writeln(Transporte),
     write('Preco Total: '),writeln(Preco).
 
-fazEncomendaHandler(_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
+fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
