@@ -30,7 +30,7 @@ isZona(A) :- mapa(_,A,_).
 estafetas(Result) :- findall((N,Av,T),estafeta(N,Av,T,_),Result).
 
 %Mostra todas as encomendas
-encomendas(Result) :- findall((C,Id,P,F,T,Time),(encomenda(C,Id,P,_,_,_,F,Time,_,T,_)),Result).
+encomendas(Result) :- findall((C,Id,P,F,T,Time),(encomenda(C,Id,_,_,P,_,F,Time,_,T,_)),Result).
 
 %Mostra todas os Transportes
 transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
@@ -71,6 +71,7 @@ escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sor
 */
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
+	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,
     (Data+PrazoS) >= TimeStamp,
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
@@ -79,8 +80,8 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
-    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
-    (Data+Prazo) < TimeStamp,divisao(Avaliacao,2,NewAV),
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,
+    (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),NewAV),
 	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV).
 
