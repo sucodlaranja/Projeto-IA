@@ -4,6 +4,7 @@
 :- dynamic(estafeta/4).
 :- dynamic(inicio/1).
 :- dynamic(n_encomendas/1).
+:- dynamic(preco/7).
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de ecomendas,ocupado) secalhar meter um id aqui e nos transportes?
@@ -41,10 +42,10 @@ mapa(santa_marta_de_portuzelo,meadela,5).
 mapa(meadela,darque,10).
 mapa(darque,vila_de_punhe,10).
 
-%preco(distancia(km),peso(Kg),1/prazo,bicicleta,moto,carro)
-preco(0.5,0.5,1,1,2,3).
+%preco(distancia(km),peso(Kg),volume(m³),1/prazo,bicicleta,moto,carro)
+preco(0.5,0.5,0.5,1,1,2,3).
 
-n_encomendas(1).
+n_encomendas(9).
 %encomenda(cliente,id,peso(kg),volume(m^3),prazo(Horas),preco,freguesia,data(Timestamp s),estafeta,transporte,(estado-boolean entregue,a entregar)).
 encomenda(jj,0,2.5,10,2,12,darque,0,joao,bicicleta,true).
 encomenda(ogs,1,2.5,10,2,12,darque,1,joao,bicicleta,true).

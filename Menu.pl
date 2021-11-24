@@ -17,10 +17,14 @@ menu :-
 
 
 
-
-%output vai ser um conjunto de frases com a seguinte informacao: estafeta,transporte ou false se nao for possivel
-%ta tudo feito o que esta escrito, so falta calcular o preco
-menuencomenda :- 
+/*
+    ================================================================================================
+    menu para quando o utilizador faz a encomenda, pergunta os dados da encomenda, estes sao direcionados para o handler
+    que vai ser responsavel por avaliar se a encomenda e possivel, atraves do caminho,transportes e estafetas disponiveis,
+    calcula tambem preco da encomenda.
+    ================================================================================================
+*/
+menuEncomenda :- 
     write('Insira o seu nome: '),read(Nome),
     write('Insira o Peso: '),read(Peso),
     write('Insira o Volume: '),read(Volume),
@@ -29,8 +33,14 @@ menuencomenda :-
     fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia).
 
 
-%mudar a data para timestamp e verifica la,talvez criar um handle para isto.
-%criar um handler para o caso da (data+pRAZO NAO SE confirmar)
+/*
+    ================================================================================================
+    menu entrega para quando um utilizador da entrega de uma encomendas
+    pede o id da encomenda que vai dar com entregue,os dados de quando entregou
+    e a avaliacao este e direcionado para o handler para verificar se existiu atrasos
+    e fazer o procedimento correspondente
+    ================================================================================================
+*/
 menuEntrega :-
     write('Coloque o Id da encomenda: '),read(Id),
     write('Coloque o ano da entrega: '),read(Ano),

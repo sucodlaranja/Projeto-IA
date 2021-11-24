@@ -1,6 +1,12 @@
 :-consult('auxiliar.pl').
 
-%DA UPDATE GERAL A FAZER A ENCOMENDA, DIZER QUE FOI ENTREGUE MUDAR DE NOME QUE TA CONFUSO
+/*
+===============================================================================================
+Dois predicados muito similares, responsaveis por atualizar estados
+o True atualiza o estado quando o programa recebe uma nova encomenda
+O False atualiza o estado quando o utilizador da entrega de uma encomenda
+===============================================================================================
+*/
 updateallTrue(Transporte,Estafeta,Id) :- 
 	remove(Transporte),remove(Estafeta),remove(Id),addNewTrue(Transporte,Estafeta,Id).
 
@@ -21,10 +27,14 @@ isZona(A) :- mapa(A,_,_).
 isZona(A) :- mapa(_,A,_).
 
 %Mostra todos os estafetas, e so copiar isto para os outros...
-estafetas(Result) :- findall(A,estafeta(A,_,_,_),Result).
+estafetas(Result) :- findall((N,Av,T),estafeta(N,Av,T,_),Result).
 
 %Mostra todas as encomendas
-encomendas(Result) :- findall((C,P,F,T,Time),(encomenda(C,_,P,_,_,_,F,Time,_,T,_)),Result).
+encomendas(Result) :- findall((C,Id,P,F,T,Time),(encomenda(C,Id,P,_,_,_,F,Time,_,T,_)),Result).
+
+%Mostra todas os Transportes
+transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
+
 
 /*
 	====================================================================================================
@@ -48,7 +58,9 @@ escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(
 %Escolhe o estafeta com base na sua avaliacao
 escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),first(H,R).
 
-
+/***************************************************************
+ * Handlers
+***************************************************************/
 
 
 /*	

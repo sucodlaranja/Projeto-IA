@@ -1,5 +1,5 @@
-%:- consult('BaseDeConhecimento.pl').
-:- consult('BaseDeConhecimento_TesteJorge.pl').
+:- consult('BaseDeConhecimento.pl').
+%:- consult('BaseDeConhecimento_TesteJorge.pl').
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
@@ -53,10 +53,14 @@ printList([H|T]) :- writeln(H),printList(T).
 
 
 printEncomendas([]).
-printEncomendas([(C,P,F,T,Time)|Tail]) :- write(C),write(','),write(P),
+printEncomendas([(C,Id,P,F,T,Time)|Tail]) :- write(Id),write(','),write(C),write(','),write(P),
     write(','),write(F),write(','),
     write(T),write(','),
     visual_data(Time),nl,printEncomendas(Tail).
+
+printEstafetas([]).
+printEstafetas([(N,Av,T)|Tail]) :- write(N),write(','),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
+
 
 /****************************************************************
  * Operacoes sobre Pares
@@ -91,16 +95,16 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 
 %Calcula o preco da encomenda tendo em conta a distancia,peso, prazo e meio de transporte.
 calculapreco(Distancia,Peso,Volume,Prazo,bicicleta,R) :- 
-	preco(PD,PPeso,PPrazo,PBicicleta,_,_),
-	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PBicicleta).
+	preco(PD,PPeso,PVolume,PPrazo,PBicicleta,_,_),
+	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PBicicleta).
 
 calculapreco(Distancia,Peso,Volume,Prazo,moto,R) :- 
-	preco(PD,PPeso,PPrazo,_,PMoto,_),
-	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PMoto).
+	preco(PD,PPeso,PVolume,PPrazo,_,PMoto,_),
+	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PMoto).
 
 calculapreco(Distancia,Peso,Volume,Prazo,carro,R) :- 
-	preco(PD,PPeso,PPrazo,_,_,PCarro),
-	R is (PD*Distancia + Peso*PPeso + PPrazo/Prazo + PCarro).
+	preco(PD,PPeso,PVolume,PPrazo,_,_,PCarro),
+	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PCarro).
 
 %para verificar que existe caminho e ja diz a distancia
 adjacente(A,B,Km) :- mapa(A,B,Km).
@@ -114,10 +118,11 @@ adjacente(A,B,Km) :- mapa(B,A,Km).
 soma(X,Y,R) :- R is X+Y.
 
 divisao(_,0,0) :- !.
-divisao(0,_,0) :- !.
 divisao(A,B,R) :- R is (A/B).
 
 /****************************************************************
  * Headers
 ****************************************************************/
 encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data').
+transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
+estafetasHeader :- writeln('Nome,Avaliacao').
