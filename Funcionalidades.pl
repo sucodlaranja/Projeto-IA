@@ -71,8 +71,8 @@ escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sor
 */
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
-    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), T), divisao(T,3600,TimeStamp),
-    (Data+Prazo) >= TimeStamp,
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,
+    (Data+PrazoS) >= TimeStamp,
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao).
 
