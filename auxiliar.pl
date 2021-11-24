@@ -51,16 +51,46 @@ printList([]).
 printList([H|T]) :- writeln(H),printList(T).
 
 
-
 printEncomendas([]).
 printEncomendas([(C,Id,P,F,T,Time)|Tail]) :- write(Id),write(','),write(C),write(','),write(P),
     write(','),write(F),write(','),
     write(T),write(','),
     visual_data(Time),nl,printEncomendas(Tail).
 
+<<<<<<< HEAD
 printEstafetas([]).
 printEstafetas([(N,Av,T)|Tail]) :- write(N),write(','),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
 
+=======
+printListQ2([]).
+printListQ2([(Estafeta,Lista_Ids)|T]) :- 
+    write(Estafeta),
+    write(' -> Ids das encomendas : '),
+    printListQ2aux(Lista_Ids),
+    writeln('.'),
+    printListQ2(T).
+
+printListQ2aux([]).
+printListQ2aux([LastID]) :- write(LastID).
+printListQ2aux([ID|Others]) :- 
+    write(ID),
+    write(', '),
+    printListQ2aux(Others).
+
+printListQ5([],_).
+printListQ5([(N_encomendas,Zona)|T],N) :-
+    write(N),write('ª -> '),
+    write(Zona),write(' com '),
+    write(N_encomendas),writeln(' encomendas.'),
+    Nseg is N + 1,
+    printListQ5(T,Nseg).
+
+printListQ7([]).
+printListQ7([(Vezes_usado,Meio_transporte)|T]) :-
+    write(Meio_transporte),write(' com '),
+    write(Vezes_usado),writeln(' encomendas.'),
+    printListQ7(T).
+>>>>>>> a849e57c39a9060b9f0f9c13188a895372140bef
 
 /****************************************************************
  * Operacoes sobre Pares
@@ -117,8 +147,15 @@ adjacente(A,B,Km) :- mapa(B,A,Km).
 ****************************************************************/
 soma(X,Y,R) :- R is X+Y.
 
+<<<<<<< HEAD
 divisao(_,0,0) :- !.
 divisao(A,B,R) :- R is (A/B).
+=======
+divisao(_,0,0).
+divisao(A,B,R) :- R is A/B.
+
+mybetween(X,Y,B) :- B>=X, B=<Y. 
+>>>>>>> a849e57c39a9060b9f0f9c13188a895372140bef
 
 /****************************************************************
  * Headers
