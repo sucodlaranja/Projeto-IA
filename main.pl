@@ -3,9 +3,11 @@
 
 
 main :-
+	repeat,
     menu,
     read(X),
-    option(X).
+    option(X),
+    fail.
 
     
 %ta a dar um bug no choose mas deve ser do meu compiler

@@ -144,7 +144,7 @@ adjacente(A,B,Km) :- mapa(B,A,Km).
 ****************************************************************/
 soma(X,Y,R) :- R is X+Y.
 
-divisao(_,0,0).
+divisao(_,0,0) :- !.
 divisao(A,B,R) :- R is A/B.
 
 mybetween(X,Y,B) :- B>=X, B=<Y. 
