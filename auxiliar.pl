@@ -57,11 +57,9 @@ printEncomendas([(C,Id,P,F,T,Time)|Tail]) :- write(Id),write(','),write(C),write
     write(T),write(','),
     visual_data(Time),nl,printEncomendas(Tail).
 
-<<<<<<< HEAD
 printEstafetas([]).
 printEstafetas([(N,Av,T)|Tail]) :- write(N),write(','),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
 
-=======
 printListQ2([]).
 printListQ2([(Estafeta,Lista_Ids)|T]) :- 
     write(Estafeta),
@@ -90,7 +88,6 @@ printListQ7([(Vezes_usado,Meio_transporte)|T]) :-
     write(Meio_transporte),write(' com '),
     write(Vezes_usado),writeln(' encomendas.'),
     printListQ7(T).
->>>>>>> a849e57c39a9060b9f0f9c13188a895372140bef
 
 /****************************************************************
  * Operacoes sobre Pares
@@ -147,15 +144,10 @@ adjacente(A,B,Km) :- mapa(B,A,Km).
 ****************************************************************/
 soma(X,Y,R) :- R is X+Y.
 
-<<<<<<< HEAD
-divisao(_,0,0) :- !.
-divisao(A,B,R) :- R is (A/B).
-=======
 divisao(_,0,0).
 divisao(A,B,R) :- R is A/B.
 
 mybetween(X,Y,B) :- B>=X, B=<Y. 
->>>>>>> a849e57c39a9060b9f0f9c13188a895372140bef
 
 /****************************************************************
  * Headers
