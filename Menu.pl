@@ -12,7 +12,9 @@ menu :-
     writeln('4 - adicionar encomenda'),
     writeln('5 - verificar estatisticas encomendas'),
     writeln('6 - Dar entrega da encomenda'),
-    writeln('7 - Exit'),
+    writeln('7 - Verificar tabela de precos'),
+    writeln('8 - Mudar tabela de precos'),
+    writeln('9 - Exit'),
     write('Choose: ').
 
 
@@ -66,6 +68,23 @@ menuestatisticas :-
     read(X),
     opcaoestatisticas(X). 
 
+
+/* 
+    ================================================================
+    menu que atualiza a tabela de precos 
+    ================================================================
+*/
+menuMudaPreco :-
+    write('Insira o novo preco por km: '),read(PDistancia),
+    write('Insira o novo preco por kg: '),read(PPeso),
+    write('Insira o novo preco por volume: '),read(PVolume),
+    write('Insira o novo preco por prazo: '),read(PPrazo),
+    write('Insira o novo preco por bicicleta: '),read(PBicicleta),
+    write('Insira o nova preco por moto: '),read(PMoto),
+    write('Insira o nova preco por Carro: '),read(PCarro),
+    remove(preco(_,_,_,_,_,_,_)),
+    insere(preco(PDistancia,PPeso,PVolume,PPrazo,PBicicleta,PMoto,PCarro)),
+    writeln('Tabela de precos atualizada!'). 
     
 
 /****************************************************************

@@ -3,10 +3,23 @@
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
+printTabelaPreco :- preco(Distancia,Peso,Volume,Prazo,Bicicleta,Moto,Carro),
+    write('Preco por km: '),writeln(Distancia),
+    write('Preco por kg: '),writeln(Peso),
+    write('Preco por Volume: '),writeln(Volume),
+    write('Preco por Prazo: '),write(Prazo),writeln('/Prazo'),
+    write('Taxa Bicicleta: '),writeln(Bicicleta),
+    write('Taxa Moto: '),writeln(Moto),
+    write('Taxa Carro: '),writeln(Carro).
 
 /****************************************************************
  * Operacoes sobre datas
 ****************************************************************/
+/*
+    ================================================================
+    verifica se a data da é uma data real
+    ================================================================
+*/
 validadata(date(Y,2,D,H,Min,_,_,_,_)) :- 
     Y mod 4 =\= 0,
     D >=1,D=<29,
@@ -34,7 +47,11 @@ validadata(date(Y,M,D,H,Min,_,_,_,_)) :-
     H>= 0, H=<23,
     Min>=1,Min=<59.
 
-
+/*
+    ========================================================================
+    Recebe um timestamp e transforma em algo mais apelativo para ler
+    ========================================================================
+*/
 visual_data(Timestamp) :-
     stamp_date_time(Timestamp,date(Ano,Mes,Dia,Hora,Minuto,_,_,_,_),0),
     write(Ano),write('/'),write(Mes),write('/'),write(Dia),write(' '),write(Hora),write(':'),write(Minuto).
@@ -46,11 +63,11 @@ take(N, _, Xs) :- N =< 0, !, N =:= 0, Xs = [].
 take(_, [], []).
 take(N, [X|Xs], [X|Ys]) :- M is N-1, take(M, Xs, Ys).
 
-%prototipo de imprimir uma lista, ficaria mais facil criar headers indiduais e spamar esta funcao pra tudo
+%Funcão geral que da print de uma lista
 printList([]).
 printList([H|T]) :- writeln(H),printList(T).
 
-
+%Funcao para imprimir uma lista de encomendas
 printEncomendas([]).
 printEncomendas([(C,Id,P,F,T,Time)|Tail]) :- write(Id),write(','),write(C),write(','),write(P),
     write(','),write(F),write(','),
@@ -117,10 +134,12 @@ addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso
 
 
 
-
-
-
-%Calcula o preco da encomenda tendo em conta a distancia,peso, prazo e meio de transporte.
+/*
+    ========================================================================
+    calcula o preco de uma encomenda, tendo em conta a sua distancia,
+    peso, volume, prazo e modo de transporte.
+    ========================================================================
+*/
 calculapreco(Distancia,Peso,Volume,Prazo,bicicleta,R) :- 
 	preco(PD,PPeso,PVolume,PPrazo,PBicicleta,_,_),
 	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PBicicleta).

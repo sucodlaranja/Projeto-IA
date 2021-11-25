@@ -2,7 +2,6 @@
 :- dynamic(encomenda/11).
 :- dynamic(transporte/2).
 :- dynamic(estafeta/4).
-:- dynamic(inicio/1).
 :- dynamic(n_encomendas/1).
 :- dynamic(preco/7).
 
