@@ -96,7 +96,6 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 */
 fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia) :-
 	get_time(TimeStamp),
-    stamp_date_time(TimeStamp,_, 0),
     caminho(santa_marta_de_portuzelo,Freguesia,_,Distancia),
     escolhetransporte(Peso,Distancia,Prazo,Transporte),
     escolheestafeta(Estafeta),
