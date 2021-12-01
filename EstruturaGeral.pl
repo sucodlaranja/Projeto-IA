@@ -1,4 +1,5 @@
 :-consult('auxiliar.pl').
+:-style_check(-singleton).
 
 /*
 ===============================================================================================
@@ -74,7 +75,7 @@ escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sor
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
-    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true)
     	,encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
@@ -83,12 +84,17 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
-    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,
+    date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
     updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true)
     	,encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),NewAV),
 	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV).
 
+entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
+	encomenda(_,Id,_,_,_,_,_,Data,_,_,False),
+	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
+	date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp),
+	Data > TimeStamp, writeln('A data inserida nao e uma data valida.').
 
 
 /* 
