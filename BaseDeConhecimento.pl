@@ -7,7 +7,7 @@
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de ecomendas,ocupado)
-estafeta(joao,0,0,true).
+estafeta(joao,0,0,false).
 estafeta(jorge,0,0,false).
 estafeta(ruben,0,0,false).
 estafeta(neiva,0,0,false).
@@ -19,7 +19,7 @@ specs_transporte(moto,20,35,2).
 specs_transporte(carro,100,3,3).
 
 %transporte(tipo,ocupado)
-transporte(bicicleta,true).
+transporte(bicicleta,false).
 transporte(bicicleta,false).
 transporte(moto,false).
 transporte(moto,false).

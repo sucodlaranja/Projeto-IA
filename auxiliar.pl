@@ -1,5 +1,4 @@
 :- consult('BaseDeConhecimento.pl').
-%:- consult('BaseDeConhecimento_TesteJorge.pl').
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
