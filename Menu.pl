@@ -27,7 +27,7 @@ menu :-
     ================================================================================================
 */
 menuEncomenda :- 
-    write('Insira o seu nome: '),read(Nome),
+    write('Insira o seu nome: (em minúsculas)'),read(Nome),
     write('Insira o Peso: '),read(Peso),
     write('Insira o Volume: '),read(Volume),
     write('Insira o Prazo: '),read(Prazo),
@@ -189,6 +189,3 @@ opcaoestatisticas(10):-
     readDia(Time_stamp_inicial,Time_stamp_final),
     peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total),
     write('O peso total neste dia foi: '),write(Peso_total),writeln('kg.').
-
-opcaoestatisticas(11):- menu. 
-%opcaoestatisticas(_).
