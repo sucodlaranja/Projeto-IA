@@ -1,5 +1,5 @@
 :- consult('Funcionalidades.pl').
-:- consult('queries.pl').
+:- consult('EstruturaGeral.pl').
 
 /****************************************************************
  * Menus
@@ -62,8 +62,9 @@ menuestatisticas :-
     writeln('6 - classificacao media de um estafeta'),
     writeln('7 - numero total de entregas pelos diferentes meios de transporte'),
     writeln('8 - numero total de entregas pelos estafetas, num determinado intervalo de tempo.'),
-    writeln('9 - calcular o peso total transportado por estafeta num determiado dia'),
-    writeln('10 - voltar atras'),
+    writeln('9 - calcular o número de encomendas entregues e não entregues'),
+    writeln('10 - calcular o peso total transportado por estafeta num determiado dia'),
+    writeln('11 - voltar atras'),
     write('Choose: '),
     read(X),
     opcaoestatisticas(X). 
@@ -103,6 +104,14 @@ readIntervalosTempo(Time_stamp_inicial,Time_stamp_final) :-
     date_time_stamp(date(Ano2,Mes2,Dia2,23,59,59,59,-,-), Time_stamp_final),
     Time_stamp_inicial =< Time_stamp_final.
 
+readDia(Time_stamp_inicial,Time_stamp_final) :-
+    write('Coloque o ano '),read(Ano),
+    write('Coloque o mes'),read(Mes),
+    write('Coloque o dia'),read(Dia),
+    !,
+    date_time_stamp(date(Ano,Mes,Dia,0,0,0,0,-,-), Time_stamp_inicial),
+    date_time_stamp(date(Ano,Mes,Dia,23,59,59,59,-,-), Time_stamp_final).
+
 % Queries 1
 opcaoestatisticas(1):- 
     !,
@@ -132,9 +141,9 @@ opcaoestatisticas(3):-
 
 % Queries 4
 opcaoestatisticas(4):- 
-    readIntervalosTempo(Time_stamp_inicial,Time_stamp_final),
+    readDia(Time_stamp_inicial,Time_stamp_final),
     numero_total_faturado(Time_stamp_inicial,Time_stamp_final,Valor_faturado),
-    write('O valor total faturado neste intervalo de tempo é: '),
+    write('O valor total faturado neste dia é: '),
     write(Valor_faturado),
     writeln('$.').
 
@@ -169,14 +178,17 @@ opcaoestatisticas(8):-
     write('O numero total de entregas, no intervalo de tempo, é: '),write(Numero_total_entregas),writeln('kg.').
 
 % Queries 9
-opcaoestatisticas(9):- 
-    entregas_comp(Comp,Ncomp),
+opcaoestatisticas(9):-
+    readIntervalosTempo(Time_stamp_inicial,Time_stamp_final), 
+    entregas_comp(Time_stamp_inicial,Time_stamp_final,Comp,Ncomp),
     write('O numero de entregas completas é: '),writeln(Comp),
     write('O numero de entregas ainda por concluir é: '),writeln(Ncomp).
 
 % Queries 10
 opcaoestatisticas(10):- 
-    readIntervalosTempo(Time_stamp_inicial,Time_stamp_final),
+    readDia(Time_stamp_inicial,Time_stamp_final),
     peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total),
-    write('O peso total, no intervalo de tempo, é: '),write(Peso_total),writeln('kg.').
+    write('O peso total neste dia foi: '),write(Peso_total),writeln('kg.').
+
+opcaoestatisticas(11):- menu. 
 %opcaoestatisticas(_).
