@@ -17,7 +17,7 @@ updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :-
 	addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
 
 
-%Calcula se existe caminho do ponto A ate ao B
+%Calcula se existe caminho do ponto A ate ao B 
 caminho(A,B,P,Km) :- caminho1(A,[B],P,Km).
 caminho1(A,[A|P1],[A|P1],0).
 caminho1(A,[Y|P1],P,K1) :- 
@@ -25,9 +25,43 @@ caminho1(A,[Y|P1],P,K1) :-
   \+(member(X,[Y|P1])),
   caminho1(A,[X,Y|P1],P,K), K1 is K + Ki.
 
+%Algoritmo dfs
+caminhoDfs(Nodo,[Nodo|Caminho],C,NodoFinal) :- profundidade(Nodo,[Nodo],Caminho,C,NodoFinal).
+
+
+profundidade(NodoFinal,_,[],0,NodoFinal).
+
+profundidade(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal) :- 
+    adjacente(Nodo,ProxNodo,C1),
+    not(member(ProxNodo,Historico)),
+    profundidade(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal), C is C1+C2.
+
+
+%caminho bfs
+caminhoBfs(Dest,Solucao,Distancia) :- caminhoBfsaux(santa_marta_de_portuzelo,Dest,Solucao),calculaDist(Solucao,Distancia).
+
+caminhoBfsaux(Orig, Dest, Cam):- bfs3(Dest,[[Orig]],Cam).
+
+bfs3(Dest,[[Dest|T]|_],Solucao)  :- reverse([Dest|T],Solucao).
+bfs3(Dest,[EstadoA|Outros],Solucao) :- 
+    EstadoA = [Act|_],
+    findall([X|EstadoA],
+            (Dest\==Act,
+            adjacente(Act,X,_),
+            not(member(X,EstadoA))),
+            Novos),
+    append(Outros,Novos,Todos),
+    bfs3(Dest,Todos,Solucao).
+
+calculaDist([],0).
+calculaDist([X],0).
+calculaDist([H,X2|T],Dist) :- adjacente(H,X2,K1), calculaDist([X2|T],K2),Dist is K1 + K2.
+
+
 %para verificar se o local existe
 isZona(A) :- mapa(A,_,_).
 isZona(A) :- mapa(_,A,_).
+
 
 %Mostra todos os estafetas, e so copiar isto para os outros...
 estafetas(Result) :- findall((N,Av,T),estafeta(N,Av,T,_),Result).
