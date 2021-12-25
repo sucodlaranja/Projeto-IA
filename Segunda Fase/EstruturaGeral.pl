@@ -16,7 +16,9 @@ updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :-
 	remove(Transporte),remove(Estafeta),remove(Encomenda),
 	addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
 
-
+/***************************************************************
+ * Algoritmos de Procura não informada
+****************************************************************/
 %Calcula se existe caminho do ponto A ate ao B 
 caminho(A,B,P,Km) :- caminho1(A,[B],P,Km).
 caminho1(A,[A|P1],[A|P1],0).
@@ -35,6 +37,19 @@ profundidade(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal) :-
     adjacente(Nodo,ProxNodo,C1),
     not(member(ProxNodo,Historico)),
     profundidade(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal), C is C1+C2.
+
+
+%Busca Iterativa Limitada em Profundidade
+caminhoDfslimite(Nodo,[Nodo|Caminho],C,NodoFinal,Limite) :- profundidadelimite(Nodo,[Nodo],Caminho,C,NodoFinal,Limite).
+
+
+profundidadelimite(NodoFinal,_,[],0,NodoFinal,_).
+
+profundidadelimite(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal,Limite) :- 
+    adjacente(Nodo,ProxNodo,C1),
+    not(member(ProxNodo,Historico)), length(Historico,N), Limite >= N,
+    profundidadelimite(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal,Limite), C is C1+C2.
+
 
 
 %caminho bfs

@@ -35,6 +35,7 @@ mapa(cardielos,nogueira,5).
 mapa(sarreleis,cardielos,2.5).
 mapa(santa_marta_de_portuzelo,sarreleis,2.5).
 mapa(sarreleis,perre,2.5).
+mapa(santa_marta_de_portuzelo,algedes,2.5).
 mapa(santa_marta_de_portuzelo,perre,5).
 mapa(perre,outeiro,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
