@@ -115,7 +115,8 @@ secondPairList([],[]).
 secondPairList([(_,R)|T],L) :- secondPairList(T,L1), append([R], L1, L).
 
 firstPairList([],[]).
-firstPairList([(F,_)|T],L) :- secondPairList(T,L1), append([F], L1, L).
+firstPairList([(F,_)|T],L) :- firstPairList(T,L1), append([F], L1, L).
+
 
 
 /****************************************************************
