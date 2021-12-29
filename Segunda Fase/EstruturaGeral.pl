@@ -72,6 +72,66 @@ calculaDist([],0).
 calculaDist([X],0).
 calculaDist([H,X2|T],Dist) :- adjacente(H,X2,K1), calculaDist([X2|T],K2),Dist is K1 + K2.
 
+/***************************************************************
+ * Algoritmos de Procura informada
+****************************************************************/
+
+%Algoritmo A estrela
+resolve_aestrela(Nodo,CaminhoDistancia/CustoDist) :-
+	estima(Nodo,EstimaD),
+	aestrela_distancia([[Nodo]/0/EstimaD],InvCaminho/CustoDist/_),
+	inverso(InvCaminho,CaminhoDistancia).
+
+aestrela_distancia(Caminhos,Caminho) :-
+	obtem_melhor_distancia(Caminhos,Caminho),
+	Caminho = [Nodo|_]/_/_,goal(Nodo).
+
+aestrela_distancia(Caminhos,SolucaoCaminho) :-
+	obtem_melhor_distancia(Caminhos,MelhorCaminho),
+	seleciona(MelhorCaminho,Caminhos,OutrosCaminhos),
+	expande_aestrela_distancia(MelhorCaminho,ExpCaminhos),
+	append(OutrosCaminhos,ExpCaminhos,NovoCaminhos),
+        aestrela_distancia(NovoCaminhos,SolucaoCaminho).	
+
+obtem_melhor_distancia([Caminho],Caminho) :- !.
+obtem_melhor_distancia([Caminho1/Custo1/Est1,_/Custo2/Est2|Caminhos],MelhorCaminho) :-
+	Custo1 + Est1 =< Custo2 + Est2,!,
+	obtem_melhor_distancia([Caminho1/Custo1/Est1|Caminhos],MelhorCaminho). 
+obtem_melhor_distancia([_|Caminhos],MelhorCaminho) :- 
+	obtem_melhor_distancia(Caminhos,MelhorCaminho).
+	
+
+expande_aestrela_distancia(Caminho,ExpCaminhos) :-
+	findall(NovoCaminho,adjacente_distancia(Caminho,NovoCaminho),ExpCaminhos).
+
+
+%Pesquisa Gulosa
+resolve_gulosa(Nodo,CaminhoDistancia/CustoDist) :-
+	estima(Nodo,EstimaD),
+	agulosa_distancia_g([[Nodo]/0/EstimaD],InvCaminho/CustoDist/_),
+	inverso(InvCaminho,CaminhoDistancia).
+
+agulosa_distancia_g(Caminhos,Caminho) :-
+	obtem_melhor_distancia_g(Caminhos,Caminho),
+	Caminho = [Nodo|_]/_/_,
+	goal(Nodo).
+
+agulosa_distancia_g(Caminhos,SolucaoCaminho) :-
+	obtem_melhor_distancia_g(Caminhos,MelhorCaminho),
+	seleciona(MelhorCaminho,Caminhos,OutrosCaminhos),
+	expande_agulosa_distancia_g(MelhorCaminho,ExpCaminhos),
+	append(OutrosCaminhos,ExpCaminhos,NovoCaminhos),
+        agulosa_distancia_g(NovoCaminhos,SolucaoCaminho).	
+
+obtem_melhor_distancia_g([Caminho],Caminho) :- !.
+obtem_melhor_distancia_g([Caminho1/Custo1/Est1,_/_/Est2|Caminhos],MelhorCaminho) :-
+	Est1 =< Est2,!,
+	obtem_melhor_distancia_g([Caminho1/Custo1/Est1|Caminhos],MelhorCaminho). 
+obtem_melhor_distancia_g([_|Caminhos],MelhorCaminho) :- 
+	obtem_melhor_distancia_g(Caminhos,MelhorCaminho).
+
+expande_agulosa_distancia_g(Caminho,ExpCaminhos) :-
+	findall(NovoCaminho,adjacente_distancia(Caminho,NovoCaminho),ExpCaminhos).
 
 %para verificar se o local existe
 isZona(A) :- mapa(A,_,_).

@@ -32,15 +32,33 @@ transporte(carro,false).
 %mapa(origem,destino,distancia(km))
 inicio(santa_marta_de_portuzelo).
 mapa(cardielos,nogueira,5).
+mapa(nogueira,outeiro,10).
+mapa(nogueira,vila_de_punhe,5).
 mapa(sarreleis,cardielos,2.5).
 mapa(santa_marta_de_portuzelo,sarreleis,2.5).
 mapa(sarreleis,perre,2.5).
 mapa(santa_marta_de_portuzelo,algedes,2.5).
 mapa(santa_marta_de_portuzelo,perre,5).
 mapa(perre,outeiro,5).
+mapa(perre,meadela,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
 mapa(meadela,darque,10).
 mapa(darque,vila_de_punhe,10).
+mapa(darque,neves,7).
+mapa(neves,vila_de_punhe,5).
+
+estima(sarreleis,2.5).
+estima(perre,5).
+estima(meadela,5).
+estima(algedes,5).
+estima(cardielos,6).
+estima(outeiro,6).
+estima(darque,17).
+estima(vila_de_punhe,25).
+estima(neves,22).
+estima(nogueira,11).
+estima(santa_marta_de_portuzelo,0).
+goal(santa_marta_de_portuzelo).
 
 %peso de cada fator na formula que calcula o peso
 %preco(distancia(km),peso(Kg),volume(m³),1/prazo,bicicleta,moto,carro)

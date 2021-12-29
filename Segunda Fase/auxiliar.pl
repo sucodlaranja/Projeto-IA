@@ -156,6 +156,12 @@ calculapreco(Distancia,Peso,Volume,Prazo,carro,R) :-
 adjacente(A,B,Km) :- mapa(A,B,Km).
 adjacente(A,B,Km) :- mapa(B,A,Km).
 
+adjacente_distancia([Nodo|Caminho]/Custo/_,[ProxNodo,Nodo|Caminho]/NovoCusto/EstDist) :-
+	adjacente(Nodo,ProxNodo,PassoCustoDist),
+	\+ member(ProxNodo,Caminho),
+	NovoCusto is Custo+PassoCustoDist,
+	estima(ProxNodo,EstDist).
+
 %calcula a velocidade de determinado transporte tendo em conta a velocidade que perde com o peso
 calculaVelocidade(bicicleta,Peso,Velocidade,VelocidadeFinal) :- 
     VelocidadeFinal is Velocidade - (Peso*0.7).
@@ -180,3 +186,13 @@ mybetween(X,Y,B) :- B>=X, B=<Y.
 encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data').
 transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
 estafetasHeader :- writeln('Nome,Avaliacao').
+
+inverso(Xs,Ys):-
+	inverso(Xs,[],Ys).
+
+inverso([],Xs,Xs).
+inverso([X|Xs],Ys,Zs):-
+	inverso(Xs,[X|Ys],Zs).
+
+seleciona(E,[E|Xs],Xs).
+seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
