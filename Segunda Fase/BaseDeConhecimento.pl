@@ -39,6 +39,9 @@ mapa(santa_marta_de_portuzelo,sarreleis,2.5).
 mapa(sarreleis,perre,2.5).
 mapa(santa_marta_de_portuzelo,algedes,2.5).
 mapa(santa_marta_de_portuzelo,perre,5).
+mapa(santa_marta_de_portuzelo,gualtar,1).
+mapa(gualtar,silvestre,2).
+mapa(silvestre,outeiro,2).
 mapa(perre,outeiro,5).
 mapa(perre,meadela,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
@@ -48,6 +51,8 @@ mapa(darque,neves,7).
 mapa(neves,vila_de_punhe,5).
 
 estima(sarreleis,2.5).
+estima(gualtar,1).
+estima(silvestre,4).
 estima(perre,5).
 estima(meadela,5).
 estima(algedes,5).

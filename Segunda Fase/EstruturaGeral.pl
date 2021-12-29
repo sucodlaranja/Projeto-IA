@@ -38,6 +38,10 @@ profundidade(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal) :-
     not(member(ProxNodo,Historico)),
     profundidade(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal), C is C1+C2.
 
+bestWayDfs(Nodo,Caminho,Dist,NodoFinal) :- findall((Caminhoaux,Distaux),
+	caminhoDfs(Nodo,Caminhoaux,Distaux,NodoFinal),Caminhos), 
+	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
+
 
 %Busca Iterativa Limitada em Profundidade
 caminhoDfslimite(Nodo,[Nodo|Caminho],C,NodoFinal,Limite) :- profundidadelimite(Nodo,[Nodo],Caminho,C,NodoFinal,Limite).
@@ -50,10 +54,12 @@ profundidadelimite(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal,Limite) :-
     not(member(ProxNodo,Historico)), length(Historico,N), Limite >= N,
     profundidadelimite(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal,Limite), C is C1+C2.
 
-
+bestWayDfslimite(Nodo,Caminho,Dist,NodoFinal,Limite) :- findall((Caminhoaux,Distaux),
+	caminhoDfslimite(Nodo,Caminhoaux,Distaux,NodoFinal,Limite),Caminhos), 
+	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
 
 %caminho bfs
-caminhoBfs(Dest,Solucao,Distancia) :- caminhoBfsaux(santa_marta_de_portuzelo,Dest,Solucao),calculaDist(Solucao,Distancia).
+caminhoBfs(Inicio,Solucao,Distancia,Dest) :- caminhoBfsaux(Inicio,Dest,Solucao),calculaDist(Solucao,Distancia).
 
 caminhoBfsaux(Orig, Dest, Cam):- bfs3(Dest,[[Orig]],Cam).
 
@@ -71,6 +77,10 @@ bfs3(Dest,[EstadoA|Outros],Solucao) :-
 calculaDist([],0).
 calculaDist([X],0).
 calculaDist([H,X2|T],Dist) :- adjacente(H,X2,K1), calculaDist([X2|T],K2),Dist is K1 + K2.
+
+bestWayBfs(Nodo,Caminho,Dist,NodoFinal) :- findall((Caminhoaux,Distaux),
+	caminhoBfs(Nodo,Caminhoaux,Distaux,NodoFinal),Caminhos), 
+	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
 
 /***************************************************************
  * Algoritmos de Procura informada
