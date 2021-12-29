@@ -143,6 +143,28 @@ obtem_melhor_distancia_g([_|Caminhos],MelhorCaminho) :-
 expande_agulosa_distancia_g(Caminho,ExpCaminhos) :-
 	findall(NovoCaminho,adjacente_distancia(Caminho,NovoCaminho),ExpCaminhos).
 
+%algoritmo para varias encomendas
+caminhoNEncomendas([],[]).
+caminhoNEncomendas([H|T],Caminho,Dist) :- inicio(Nodo), bestWayDfs(Nodo,_,Dist1,H),
+	caminhoNEncomendas(T,Listaux,Distaux),append([(H,Dist1)], Listaux, Caminho),Dist is Dist1 +Distaux.%sort(2,@=<,List2,Caminho).
+	%firstPairList(List,Listaux2),caminhoNEncomendasAux(Listaaux2,Caminho,Dist).
+	
+/*,getHead(Listaux2,Head),
+	bestWayDfs(Nodo,Caminhoaux2,Distaux,Head),append(Caminhoaux2,Caminhoaux, Caminho),Dist is Dist2 + Distaux.
+*/
+caminhoNEncomendasAux([X],[],0).
+caminhoNEncomendasAux([H,H2],Caminho,Dist) :- bestWayDfs(H,Caminho,Dist,H2).
+caminhoNEncomendasAux([H,H2,H3|T],Caminho,Dist) :- bestWayDfs(H,Caminhoaux,Distaux,H2),
+	\+member(H3,Caminhoaux),bestWayDfs(H2,Caminhoauxx2,Distaux2,H3), removeHead(Caminhoauxx2,Caminhoaux2), 
+	caminhoNEncomendasAux([H3|T],Caminho1,Dist1), append(Caminhoaux,Caminhoaux2,Caminho2),
+	append(Caminho1,Caminho2,Caminho),
+	Dist is Distaux + Distaux2 + Dist1.
+
+caminhoNEncomendasAux([H,H2,H3|T],Caminho,Dist) :- bestWayDfs(H,Caminhoaux,Distaux,H2),
+	caminhoNEncomendasAux([H3|T],Caminho1,Dist1),
+	append(Caminhoaux,Caminho1,Caminho),
+	Dist is Distaux + Distaux2 + Dist1.
+
 %para verificar se o local existe
 isZona(A) :- mapa(A,_,_).
 isZona(A) :- mapa(_,A,_).

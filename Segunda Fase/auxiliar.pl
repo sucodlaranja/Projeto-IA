@@ -106,6 +106,18 @@ printListQ7([(Vezes_usado,Meio_transporte)|T]) :-
     write(Vezes_usado),writeln(' encomendas.'),
     printListQ7(T).
 
+%removes list head
+removeHead([_|T],T).
+
+getHead([H|_],H).
+
+secondPairList([],[]).
+secondPairList([(_,R)|T],L) :- secondPairList(T,L1), append([R], L1, L).
+
+firstPairList([],[]).
+firstPairList([(F,_)|T],L) :- secondPairList(T,L1), append([F], L1, L).
+
+
 /****************************************************************
  * Operacoes sobre Pares
 ****************************************************************/
