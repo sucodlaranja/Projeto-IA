@@ -6,7 +6,7 @@
 :- dynamic(preco/7).
 
 %-------------------------estafetas--------------------------------
-%estafeta(nome,avaliacao total, numero de ecomendas,ocupado)
+%estafeta(nome,avaliacao total, numero de encomendas,ocupado)
 estafeta(joao,0,0,true).
 estafeta(jorge,0,0,false).
 estafeta(ruben,0,0,false).
@@ -25,6 +25,7 @@ transporte(moto,false).
 transporte(moto,false).
 transporte(carro,false).
 transporte(carro,false).
+
 
 
 
@@ -47,8 +48,8 @@ mapa(perre,meadela,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
 mapa(meadela,darque,10).
 mapa(darque,vila_de_punhe,10).
-mapa(darque,neves,7).
-mapa(neves,vila_de_punhe,5).
+mapa(darque,barroselas,7).
+mapa(barroselas,vila_de_punhe,5).
 
 estima(sarreleis,2.5).
 estima(gualtar,1).
@@ -60,7 +61,7 @@ estima(cardielos,6).
 estima(outeiro,6).
 estima(darque,17).
 estima(vila_de_punhe,25).
-estima(neves,22).
+estima(barroselas,22).
 estima(nogueira,11).
 estima(santa_marta_de_portuzelo,0).
 goal(santa_marta_de_portuzelo).
@@ -69,7 +70,10 @@ goal(santa_marta_de_portuzelo).
 %preco(distancia(km),peso(Kg),volume(m³),1/prazo,bicicleta,moto,carro)
 preco(0.5,0.5,0.5,1,1,2,3).
 
-n_encomendas(0).
+n_encomendas(1).
 %encomenda(cliente,id,peso(kg),volume(m^3),prazo(Horas),preco,freguesia,data(Timestamp s),
-%estafeta,transporte,(estado-boolean entregue,a entregar)).
+%estafeta,transporte,(estado-boolean entregue(true),a entregar(false))).
 encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,joao,bicicleta,false).
+
+
+%caminho([santa,perre,darque],int)
