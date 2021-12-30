@@ -144,24 +144,35 @@ expande_agulosa_distancia_g(Caminho,ExpCaminhos) :-
 	findall(NovoCaminho,adjacente_distancia(Caminho,NovoCaminho),ExpCaminhos).
 
 %algoritmo para varias encomendas
-caminhoNEncomendas(L,Caminho,Dist) :- inicio(Nodo),caminhoNEncomendasaux(L,Listaux),firstPairList(Listaux,Listaux2),
-	caminhoNEncomendasAuxAux(Listaux2,[],Caminhoaux,Dist1),getHead(Caminhoaux,Head),
-	bestWayDfs(Nodo,Caminhoaux2,Dist2,Head),removeHead(Caminhoaux,Caminhoaux3),
-	append(Caminhoaux2,Caminhoaux,Caminho),Dist is Dist1 + Dist2.
+caminhoNEncomendas(L,Caminho,Dist) :- inicio(Nodo),findBestOrder(L,Listaux),firstPairList(Listaux,Listaux2),
+	caminhoNEncomendasaux(Listaux2,[],Caminhoaux,Distaux),getHead(Caminhoaux,Head),
+	bestWayDfs(Nodo,Caminho1,Dist1,Head),removeHead(Caminhoaux,Caminhoaux2),
+	append(Caminho1,Caminhoaux2,Caminho),Dist is Dist1 + Distaux.
 
-
-caminhoNEncomendasaux([],[]).
-caminhoNEncomendasaux([H|T],List) :- bestWayDfs(Nodo,_,Dist1,H),
-	caminhoNEncomendasaux(T,Listaux),append([(H,Dist1)], Listaux, Listaux2),
+/*
+	================================================================================================
+	Dado uma lista com zonas,calcula o melhor caminho do centro de distribuicao 
+	até cada uma das zonas, cria uma lista com a distancia a cada zona e ordena pela menor distancia.
+	================================================================================================
+*/
+findBestOrder([],[]).
+findBestOrder([H|T],List) :- inicio(Nodo), bestWayDfs(Nodo,_,Dist1,H),
+	findBestOrder(T,Listaux),append([(H,Dist1)], Listaux, Listaux2),
 	sort(2,@=<,Listaux2,List).
 	
-
-caminhoNEncomendasAuxAux([X],_,[],0).
-caminhoNEncomendasAuxAux([H,H2|T],Historico,Caminho1,Dist) :- not(member(H2,Historico)),
+/*
+	================================================================================================
+	Dado uma lista com zonas,calcula um caminho que passe por todas estas zonas.
+	Verifica se a nova zona ja pertence ao caminho se não, calcula um caminho do 
+	ultima zona do caminho ja calculado até ao novo. Calcula também a distancia do caminho.
+	================================================================================================
+*/
+caminhoNEncomendasaux([X],_,[],0).
+caminhoNEncomendasaux([H,H2|T],Historico,Caminho1,Dist) :- not(member(H2,Historico)),
     caminhoDfs(H,ProxCam,Dist1,H2),not(member(H2,Historico)),
 	((length(Historico,N) , N > 0) -> removeHead(ProxCam,ProxCam1) ; ProxCam1 = ProxCam),
 	append(ProxCam1,Historico,HistoricoAux),append(ProxCam1,Caminho,Caminho1),
-	caminhoNEncomendasAuxAux([H2|T],HistoricoAux,Caminho,Dist2), 
+	caminhoNEncomendasaux([H2|T],HistoricoAux,Caminho,Dist2), 
 	Dist is Dist1 + Dist2.
 
 %para verificar se o local existe
@@ -183,11 +194,24 @@ transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_)
 	====================================================================================================
 	Escolhe o transporte dando prioridade aos que têm menos indice de poluicao,
 	Calcula se o transporte aguenta o peso da encomenda, a velocidade media que perde por determinado 
-	peso e se consegue chegar ao local no prazo estipulado
+	peso e se consegue chegar ao local no prazo estipulado.
 	====================================================================================================
 */
-escolhetransporte(Peso,Distancia,Prazo,R) :- 
+escolhetransporteEc(Peso,Distancia,Prazo,R) :- 
   findall((X,Indice),(transporte(X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
+  escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
+
+/*
+	====================================================================================================
+	Escolhe o transporte dando prioridade aos mais rapido,
+	Calcula se o transporte aguenta o peso da encomenda, a velocidade media que perde por determinado 
+	peso e se consegue chegar ao local no prazo estipulado.
+	====================================================================================================
+*/
+escolhetransporteVel(Peso,Distancia,Prazo,R) :-
+	findall((X,VelocidadeFinal),(transporte(X,false),specs_transporte(X,_,Velocidade,_),
+	calculaVelocidade(X,Peso,Velocidade,VelocidadeFinal)),Y),
+	sort(2,@>=,Y,Transportes),
   escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
 escolhetransporte_aux(H,[(H,_)],Peso,Distancia,Prazo) :- 
@@ -220,8 +244,8 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
-    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true)
-    	,encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
+    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),
+    encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
@@ -247,19 +271,35 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 	estafeta pela sua avaliacao
 	================================================================================================
 */
-fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia) :-
+fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
 	get_time(TimeStamp),
 	inicio(X),
-    caminho(X,Freguesia,_,Distancia),
-    escolhetransporte(Peso,Distancia,Prazo,Transporte),
+    escolheCaminho(TipoP,X,Freguesia,Caminho,Distancia),
+    escolhetransporte(TipoT,Peso,Distancia,Prazo,Transporte),
     escolheestafeta(Estafeta),
     n_encomendas(Id),
-    calculapreco(Distancia,Peso,Volume,Prazo,Transporte,Preco),
-    insere(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,Estafeta,Transporte,false)),
-    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id)),!,
+    calculapreco(Distancia,Peso,Volume,Prazo,Transporte,Preco),!,
+	write('O percurso será: '),writeln(Caminho),
+	write('Distancia calculada(Km): '),writeln(Distancia),
     write('O id da sua encomenda é: '),writeln(Id),
     write('A sua encomenda sera entregue por: '),writeln(Estafeta),
     write('Modo de Transporte: '),writeln(Transporte),
-    write('Preco Total: '),writeln(Preco).
+    write('Preco Total: '),writeln(Preco),nl,
+	write('Pretende guardar esta informacão na base de conhecimento? '), read(Resposta),
+	(Resposta = 'y' ->
+	(insere(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,Estafeta,Transporte,false)),
+    updateallTrue(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id))); true).
 
 fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
+
+escolheCaminho(1,Nodo,Freguesia,Caminho,Distancia) :-  caminhoDfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(2,Nodo,Freguesia,Caminho,Distancia) :-  caminhoBfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(4,Nodo,Freguesia,Caminho,Distancia) :-  bestWayDfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(3,Nodo,Freguesia,Caminho,Distancia) :-  write('Insira o limite de profundidade'),
+	read(Limite), caminhoDfslimite(Nodo,Caminho,Distancia,Limite,Freguesia).
+
+escolhetransporte(1,Peso,Distancia,Prazo,Transporte) :- escolhetransporteVel(Peso,Distancia,Prazo,Transporte).
+escolhetransporte(2,Peso,Distancia,Prazo,Transporte) :- escolhetransporteEc(Peso,Distancia,Prazo,Transporte).
+
+
+

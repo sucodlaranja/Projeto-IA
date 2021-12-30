@@ -32,7 +32,15 @@ menuEncomenda :-
     write('Insira o Volume: '),read(Volume),
     write('Insira o Prazo: '),read(Prazo),
     write('Insira o Freguesia: '),read(Freguesia),
-    fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia).
+    writeln('Escolha o tipo de procura para o caminho : '),
+    writeln('1 - Pesquisa em profundidade'),
+    writeln('2 - Pesquisa em largura'),
+    writeln('3 - Pesquisa em profundidade limitada'),
+    writeln('4 - melhor caminho'),write('Choose: '), read(TipoP),
+    writeln('O que pretende priorizar? '),
+    writeln('1 - Velocidade'),writeln('2 - Ecologico'), 
+    write('Choose: '), read(TipoT),
+    fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT).
 
 
 /*

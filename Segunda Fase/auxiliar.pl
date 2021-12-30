@@ -106,8 +106,9 @@ printListQ7([(Vezes_usado,Meio_transporte)|T]) :-
     write(Vezes_usado),writeln(' encomendas.'),
     printListQ7(T).
 
-%removes list head
+
 removeHead([_|T],T).
+
 
 getHead([H|_],H).
 

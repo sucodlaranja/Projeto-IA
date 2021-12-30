@@ -16,7 +16,7 @@ estafeta(neiva,0,0,false).
 %specs_transporte(tipo,peso,velocidade media,índice de poluição)
 specs_transporte(bicicleta,5,10,1).
 specs_transporte(moto,20,35,2).
-specs_transporte(carro,100,3,3).
+specs_transporte(carro,100,25,3).
 
 %transporte(tipo,ocupado)
 transporte(bicicleta,false).
