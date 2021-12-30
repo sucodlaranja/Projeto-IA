@@ -143,8 +143,8 @@ remove(Termo) :- assert(Termo), !, fail.
 addNewTrue(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
 	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
 
-addNewFalse(transporte(Nt,true),estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
-	insere(transporte(Nt,false)),soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,false)),
+addNewDeliveryDone(estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
+	soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,true)),
     insere(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,true)).
 
 
@@ -211,3 +211,8 @@ inverso([X|Xs],Ys,Zs):-
 
 seleciona(E,[E|Xs],Xs).
 seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
+
+choose(X) :- write('Escolha uma opção: '),read(X).
+invalida :- write('Opção Invalida!').
+writeCaminho(Caminho,Dist) :- 
+    write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).

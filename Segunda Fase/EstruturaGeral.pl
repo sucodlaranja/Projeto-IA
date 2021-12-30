@@ -12,9 +12,9 @@ updateallTrue(Transporte,Estafeta,Id) :-
 	remove(Transporte),remove(Estafeta),remove(Id),
 	addNewTrue(Transporte,Estafeta,Id).
 
-updateallFalse(Transporte,Estafeta,Encomenda,Avaliacao) :- 
-	remove(Transporte),remove(Estafeta),remove(Encomenda),
-	addNewFalse(Transporte,Estafeta,Encomenda,Avaliacao).
+updateDelivery(Estafeta,Encomenda,Avaliacao) :- 
+	remove(Estafeta),remove(Encomenda),
+	addNewDeliveryDone(Estafeta,Encomenda,Avaliacao).
 
 /***************************************************************
  * Algoritmos de Procura não informada
@@ -239,29 +239,52 @@ escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sor
 	calcula se ha atraso na entrega e atualiza os estados do transporte e do estafeta.
 	======================================================================================================
 */
+
+
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
-    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true),
-    encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),Avaliacao),
-	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao).
+    updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,False),Avaliacao),
+	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
+	writeln('Escolha o tipo de procura para o caminho de volta para o centro de entregas: '),
+	writeln('1 - Pesquisa em profundidade'),
+    writeln('2 - Pesquisa em largura'),
+    writeln('3 - Pesquisa em profundidade limitada'),
+    writeln('4 - melhor caminho'),
+	writeln('5 - a estrela'),
+	writeln('6 - Gulosa'),repeat,choose(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
-    updateallFalse(transporte(Transporte,true),estafeta(Estafeta,_,_,true)
-    	,encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,False),NewAV),
-	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV).
+	updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,False),NewAV),
+	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV),
+	writeln('Escolha o tipo de procura para o caminho de volta para o centro de entregas: '),
+	writeln('1 - Pesquisa em profundidade'),
+    writeln('2 - Pesquisa em largura'),
+    writeln('3 - Melhor caminho'),
+	writeln('4 - Pesquisa em profundidade limitada'),
+	writeln('5 - A estrela'),
+	writeln('6 - Gulosa'),repeat,choose(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 	encomenda(_,Id,_,_,_,_,_,Data,_,_,False),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
 	date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp),
 	Data > TimeStamp, writeln('A data inserida nao e uma data valida.').
+
+escolheCaminhovolta(1,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoDfs(Freguesia,Caminho,Distancia,Nodo).
+escolheCaminhovolta(2,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoBfs(Freguesia,Caminho,Distancia,Nodo).
+escolheCaminhovolta(3,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), bestWayDfs(Freguesia,Caminho,Distancia,Nodo).
+escolheCaminhovolta(4,Freguesia,Caminho,Distancia) :-   !,inicio(Nodo),write('Insira o limite'),read(Limite),
+	(caminhoDfslimite(Freguesia,Caminho,Distancia,Nodo,Limite) -> true ; fail).
+escolheCaminhovolta(5,Freguesia,Caminho,Distancia) :-  	!,resolve_gulosa(Freguesia,Caminho/Distancia).
+escolheCaminhovolta(6,Freguesia,Caminho,Distancia) :-  	!,resolve_gulosa(Freguesia,Caminho/Distancia).
+escolheCaminho(_,_,_,_) :- invalida,fail.
 
 
 /* 
@@ -279,8 +302,7 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
     escolheestafeta(Estafeta),
     n_encomendas(Id),
     calculapreco(Distancia,Peso,Volume,Prazo,Transporte,Preco),!,
-	write('O percurso será: '),writeln(Caminho),
-	write('Distancia calculada(Km): '),writeln(Distancia),
+	writeCaminho(Caminho,Distancia),
     write('O id da sua encomenda é: '),writeln(Id),
     write('A sua encomenda sera entregue por: '),writeln(Estafeta),
     write('Modo de Transporte: '),writeln(Transporte),
@@ -292,11 +314,12 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
 
 fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
 
-escolheCaminho(1,Nodo,Freguesia,Caminho,Distancia) :-  caminhoDfs(Nodo,Caminho,Distancia,Freguesia).
-escolheCaminho(2,Nodo,Freguesia,Caminho,Distancia) :-  caminhoBfs(Nodo,Caminho,Distancia,Freguesia).
-escolheCaminho(4,Nodo,Freguesia,Caminho,Distancia) :-  bestWayDfs(Nodo,Caminho,Distancia,Freguesia).
-escolheCaminho(3,Nodo,Freguesia,Caminho,Distancia) :-  write('Insira o limite de profundidade'),
+escolheCaminho(1,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoDfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(2,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoBfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(4,Nodo,Freguesia,Caminho,Distancia) :- !,bestWayDfs(Nodo,Caminho,Distancia,Freguesia).
+escolheCaminho(3,Nodo,Freguesia,Caminho,Distancia) :- !,write('Insira o limite de profundidade'),
 	read(Limite), caminhoDfslimite(Nodo,Caminho,Distancia,Limite,Freguesia).
+escolheCaminho(_,_,_,_,_) :- invalida,fail.
 
 escolhetransporte(1,Peso,Distancia,Prazo,Transporte) :- escolhetransporteVel(Peso,Distancia,Prazo,Transporte).
 escolhetransporte(2,Peso,Distancia,Prazo,Transporte) :- escolhetransporteEc(Peso,Distancia,Prazo,Transporte).

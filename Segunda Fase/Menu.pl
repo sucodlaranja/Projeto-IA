@@ -4,7 +4,7 @@
 /****************************************************************
  * Menus
 ****************************************************************/
-menu :-
+menu(X) :-
     writeln('--------------------------------MENU-----------------------------------'),nl,
     writeln('1 - consultar os estafetas'),
     writeln('2 - consultar encomendas'),
@@ -15,7 +15,7 @@ menu :-
     writeln('7 - Verificar tabela de precos'),
     writeln('8 - Mudar tabela de precos'),
     writeln('9 - Exit'),
-    write('Choose: ').
+    choose(X).
 
 
 
@@ -32,14 +32,14 @@ menuEncomenda :-
     write('Insira o Volume: '),read(Volume),
     write('Insira o Prazo: '),read(Prazo),
     write('Insira o Freguesia: '),read(Freguesia),
+    writeln('O que pretende priorizar? '),
+    writeln('1 - Velocidade'),writeln('2 - Ecologico'), 
+    choose(TipoT),
     writeln('Escolha o tipo de procura para o caminho : '),
     writeln('1 - Pesquisa em profundidade'),
     writeln('2 - Pesquisa em largura'),
     writeln('3 - Pesquisa em profundidade limitada'),
-    writeln('4 - melhor caminho'),write('Choose: '), read(TipoP),
-    writeln('O que pretende priorizar? '),
-    writeln('1 - Velocidade'),writeln('2 - Ecologico'), 
-    write('Choose: '), read(TipoT),
+    writeln('4 - melhor caminho'),repeat,choose(TipoP),
     fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT).
 
 
@@ -73,8 +73,7 @@ menuestatisticas :-
     writeln('9 - calcular o número de encomendas entregues e não entregues'),
     writeln('10 - calcular o peso total transportado por estafeta num determiado dia'),
     writeln('11 - voltar atras'),
-    write('Choose: '),
-    read(X),
+    choose(X),
     opcaoestatisticas(X). 
 
 

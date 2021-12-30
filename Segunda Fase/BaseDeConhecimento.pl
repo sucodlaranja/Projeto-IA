@@ -7,7 +7,7 @@
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de ecomendas,ocupado)
-estafeta(joao,0,0,false).
+estafeta(joao,0,0,true).
 estafeta(jorge,0,0,false).
 estafeta(ruben,0,0,false).
 estafeta(neiva,0,0,false).
@@ -72,3 +72,4 @@ preco(0.5,0.5,0.5,1,1,2,3).
 n_encomendas(0).
 %encomenda(cliente,id,peso(kg),volume(m^3),prazo(Horas),preco,freguesia,data(Timestamp s),
 %estafeta,transporte,(estado-boolean entregue,a entregar)).
+encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,joao,bicicleta,false).
