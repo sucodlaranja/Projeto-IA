@@ -22,7 +22,7 @@ menuEscolheCaminhoVolta(TipoP) :-
 
 choose(X) :- write('Escolha uma opção: '),read(X).
 invalida :- write('Opção Invalida!').
-continue :- nl,writeln('escreva ok para continuar'),read(_),main.
+continue :- nl,writeln('escreva ok para continuar'),read(_).
 writeCaminho(Caminho,Dist) :- 
     write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).
 

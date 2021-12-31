@@ -76,4 +76,4 @@ n_encomendas(2).
 encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,joao,bicicleta,false).
 encomenda(jj,1,2.5,10,2,12,perre,1640887420.1628525,joao,bicicleta,false).
 
-%caminho([santa,perre,darque],int)
+%caminho([santa,perre,darque],id )

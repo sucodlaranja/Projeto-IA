@@ -183,7 +183,7 @@ isZona(A) :- mapa(_,A,_).
 estafetas(Result) :- findall((N,Av,T),estafeta(N,Av,T,_),Result).
 
 %Mostra todas as encomendas
-encomendas(Result) :- findall((C,Id,P,F,T,Time),(encomenda(C,Id,_,_,P,_,F,Time,_,T,_)),Result).
+encomendas(Result) :- findall((C,Id,Prazo,Freguesia,Estafeta,Transporte,Time,Entregue),(encomenda(C,Id,_,_,Prazo,_,Freguesia,Time,Estafeta,Transporte,Entregue)),Result).
 
 %Mostra todas os Transportes
 transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
@@ -245,7 +245,7 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
-    updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,true),Avaliacao),
+    updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,false),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
 	repeat,menuEscolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
 	writeCaminho(CaminhoVolta,DistVolt).

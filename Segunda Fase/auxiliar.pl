@@ -63,19 +63,22 @@ take(N, _, Xs) :- N =< 0, !, N =:= 0, Xs = [].
 take(_, [], []).
 take(N, [X|Xs], [X|Ys]) :- M is N-1, take(M, Xs, Ys).
 
-%Funcão geral que da print de uma lista
+%Da print de uma lista
 printList([]).
 printList([H|T]) :- writeln(H),printList(T).
 
-%Funcao para imprimir uma lista de encomendas
+
+
+%Imprime uma lista de encomendas
 printEncomendas([]).
-printEncomendas([(C,Id,P,F,T,Time)|Tail]) :- write(Id),write(','),write(C),write(','),write(P),
-    write(','),write(F),write(','),
-    write(T),write(','),
-    visual_data(Time),nl,printEncomendas(Tail).
+printEncomendas([(C,Id,Prazo,Freguesia,Estafeta,Transporte,Time,Entregue)|Tail]) :- write(Id),write(', '),write(C),write(', '),write(Prazo),
+    write(', '),write(Freguesia),write(', '),write(Estafeta),write(', '),
+    write(Transporte),write(', '),
+    visual_data(Time),write(', '),entregue(Entregue),nl,printEncomendas(Tail).
+
 
 printEstafetas([]).
-printEstafetas([(N,Av,T)|Tail]) :- write(N),write(','),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
+printEstafetas([(N,Av,T)|Tail]) :- write(N),write(', '),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
 
 printListQ2([]).
 printListQ2([(Estafeta,Lista_Ids)|T]) :- 
@@ -215,9 +218,11 @@ mybetween(X,Y,B) :- B>=X, B=<Y.
 /****************************************************************
  * Headers
 ****************************************************************/
-encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data').
+encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data,entregue?').
 transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
 estafetasHeader :- writeln('Nome,Avaliacao').
 
+entregue(false) :- write('não').
+entregue(true) :- write('sim').
 
 
