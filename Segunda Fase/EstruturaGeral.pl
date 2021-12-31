@@ -1,5 +1,5 @@
 :-consult('auxiliar.pl').
-
+:-consult('Menuaux.pl').
 /*
 ===============================================================================================
 Dois predicados muito similares, responsaveis por atualizar estados
@@ -74,7 +74,7 @@ bfs3(Dest,[EstadoA|Outros],Solucao) :-
     bfs3(Dest,Todos,Solucao).
 
 calculaDist([],0).
-calculaDist([X],0).
+calculaDist([_],0).
 calculaDist([H,X2|T],Dist) :- adjacente(H,X2,K1), calculaDist([X2|T],K2),Dist is K1 + K2.
 
 bestWayBfs(Nodo,Caminho,Dist,NodoFinal) :- findall((Caminhoaux,Distaux),
@@ -166,7 +166,7 @@ findBestOrder([H|T],List) :- inicio(Nodo), bestWayDfs(Nodo,_,Dist1,H),
 	ultima zona do caminho ja calculado até ao novo. Calcula também a distancia do caminho.
 	================================================================================================
 */
-caminhoNEncomendasaux([X],_,[],0).
+caminhoNEncomendasaux([_],_,[],0).
 caminhoNEncomendasaux([H,H2|T],Historico,Caminho1,Dist) :- not(member(H2,Historico)),
     caminhoDfs(H,ProxCam,Dist1,H2),not(member(H2,Historico)),
 	((length(Historico,N) , N > 0) -> removeHead(ProxCam,ProxCam1) ; ProxCam1 = ProxCam),
@@ -219,7 +219,7 @@ escolhetransporte_aux(H,[(H,_)],Peso,Distancia,Prazo) :-
 	P >= Peso, VelocidadeFinal >= (Distancia/Prazo),!.
 escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :- 
 	specs_transporte(Nome,P,Velocidade,_),
-	calculaVelocidade(H,P,Velocidade,VelocidadeFinal),
+	calculaVelocidade(Nome,P,Velocidade,VelocidadeFinal),
 	P >= Peso, VelocidadeFinal >= (Distancia/Prazo),!.
 escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
 
@@ -247,7 +247,7 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
     (Data+PrazoS) >= TimeStamp,
     updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,true),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
-	repeat,menuescolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
+	repeat,menuEscolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
 	writeCaminho(CaminhoVolta,DistVolt).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
@@ -292,7 +292,7 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
     calculapreco(Distancia,Peso,Volume,Prazo,Transporte,Preco),!,
 	writeCaminho(Caminho,Distancia),
 	printEncomenda(Id,Estafeta,Transporte,Preco),
-	write('Pretende guardar esta informacão na base de conhecimento? '), read(Resposta),
+	write('Pretende guardar esta informacão na base de conhecimento?[y/n] '), read(Resposta),
 	(Resposta = 'y' ->
 	(insere(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,Estafeta,Transporte,false)),
     addNewEncomenda(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id))) ; true).

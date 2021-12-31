@@ -151,9 +151,12 @@ insere(Termo) :- retract(Termo), !, fail.
 remove(Termo) :- retract(Termo).
 remove(Termo) :- assert(Termo), !, fail.
 
-%-------------------------Funcao auxiliar para a funcionalidade updateall, adiciona os objetos com a variavel 
-%"ocupado" para positivo e soma mais um ao id das encomendas.
-%PS MUDAR NOME DE FUNCOES
+/*
+    ==============================================================================
+    Atualiza a base de conhecimento no caso de adicionar uma nova encomenda ou 
+    quando uma encomenda foi entregue.
+    ==============================================================================
+*/
 addNewEncomenda(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
 	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
 
