@@ -118,6 +118,20 @@ secondPairList([(_,R)|T],L) :- secondPairList(T,L1), append([R], L1, L).
 firstPairList([],[]).
 firstPairList([(F,_)|T],L) :- firstPairList(T,L1), append([F], L1, L).
 
+makeFregList([],[]).
+makeFregList([Id|T],R) :- 
+	encomenda(_,Id,_,_,_,_,Freguesia,_,_,_,_),
+	makeFregList(T,R1),R =[Freguesia|R1].
+
+inverso(Xs,Ys):-
+	inverso(Xs,[],Ys).
+
+inverso([],Xs,Xs).
+inverso([X|Xs],Ys,Zs):-
+	inverso(Xs,[X|Ys],Zs).
+
+seleciona(E,[E|Xs],Xs).
+seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
 
 
 
@@ -140,7 +154,7 @@ remove(Termo) :- assert(Termo), !, fail.
 %-------------------------Funcao auxiliar para a funcionalidade updateall, adiciona os objetos com a variavel 
 %"ocupado" para positivo e soma mais um ao id das encomendas.
 %PS MUDAR NOME DE FUNCOES
-addNewTrue(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
+addNewEncomenda(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
 	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
 
 addNewDeliveryDone(estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
@@ -202,17 +216,5 @@ encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data').
 transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
 estafetasHeader :- writeln('Nome,Avaliacao').
 
-inverso(Xs,Ys):-
-	inverso(Xs,[],Ys).
 
-inverso([],Xs,Xs).
-inverso([X|Xs],Ys,Zs):-
-	inverso(Xs,[X|Ys],Zs).
 
-seleciona(E,[E|Xs],Xs).
-seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
-
-choose(X) :- write('Escolha uma opção: '),read(X).
-invalida :- write('Opção Invalida!').
-writeCaminho(Caminho,Dist) :- 
-    write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).

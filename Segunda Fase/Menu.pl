@@ -14,7 +14,8 @@ menu(X) :-
     writeln('6 - Dar entrega da encomenda'),
     writeln('7 - Verificar tabela de precos'),
     writeln('8 - Mudar tabela de precos'),
-    writeln('9 - Exit'),
+    writeln('9 - Testar com entrega de varias encomendas'),
+    writeln('10 - Exit'),
     choose(X).
 
 
@@ -43,6 +44,20 @@ menuEncomenda :-
     fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT).
 
 
+menuestatisticas :- 
+    writeln('1 - estafeta mais ecologico'),
+    writeln('2 - entrega a determinado cliente'),
+    writeln('3 - clientes servidos por um determinado estafeta'),
+    writeln('4 - valor faturado num determinado dia'),
+    writeln('5 - zonas com maior volume de entregas'),
+    writeln('6 - classificacao media de um estafeta'),
+    writeln('7 - numero total de entregas pelos diferentes meios de transporte'),
+    writeln('8 - numero total de entregas pelos estafetas, num determinado intervalo de tempo.'),
+    writeln('9 - calcular o número de encomendas entregues e não entregues'),
+    writeln('10 - calcular o peso total transportado por estafeta num determiado dia'),
+    writeln('11 - voltar atras'),
+    choose(X),
+    opcaoestatisticas(X). 
 /*
     ================================================================================================
     menu entrega para quando um utilizador da entrega de uma encomendas
@@ -61,22 +76,6 @@ menuEntrega :-
     write('Coloque a avaliacao da entrega: '),read(Avaliacao),
     entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao).
 
-menuestatisticas :- 
-    writeln('1 - estafeta mais ecologico'),
-    writeln('2 - entrega a determinado cliente'),
-    writeln('3 - clientes servidos por um determinado estafeta'),
-    writeln('4 - valor faturado num determinado dia'),
-    writeln('5 - zonas com maior volume de entregas'),
-    writeln('6 - classificacao media de um estafeta'),
-    writeln('7 - numero total de entregas pelos diferentes meios de transporte'),
-    writeln('8 - numero total de entregas pelos estafetas, num determinado intervalo de tempo.'),
-    writeln('9 - calcular o número de encomendas entregues e não entregues'),
-    writeln('10 - calcular o peso total transportado por estafeta num determiado dia'),
-    writeln('11 - voltar atras'),
-    choose(X),
-    opcaoestatisticas(X). 
-
-
 /* 
     ================================================================
     menu que atualiza a tabela de precos 
@@ -93,8 +92,30 @@ menuMudaPreco :-
     remove(preco(_,_,_,_,_,_,_)),
     insere(preco(PDistancia,PPeso,PVolume,PPrazo,PBicicleta,PMoto,PCarro)),
     writeln('Tabela de precos atualizada!'). 
-    
 
+menuVariasEncomendas :-
+    write('Insira uma lista com os id\'s das encomendas que pretende testar'),
+        read(Lista),
+        variasEncomendasHandler(Lista). 
+    
+menuEscolheCaminho(TipoP) :- 
+    writeln('Escolha o tipo de procura para o caminho de volta para o centro de entregas: '),
+	writeln('1 - Pesquisa em profundidade'),
+    writeln('2 - Pesquisa em largura'),
+    writeln('3 - Melhor caminho'),
+	writeln('4 - Pesquisa em profundidade limitada'),
+	writeln('5 - A estrela'),
+	writeln('6 - Gulosa'),choose(TipoP).
+
+menuEscolheCaminhoVolta(TipoP) :-
+    
+	writeln('Escolha o tipo de procura para o caminho de volta para o centro de entregas: '),
+	writeln('1 - Pesquisa em profundidade'),
+    writeln('2 - Pesquisa em largura'),
+    writeln('3 - Pesquisa em profundidade limitada'),
+    writeln('4 - melhor caminho'),
+	writeln('5 - a estrela'),
+	writeln('6 - Gulosa'),choose(TipoP).
 /****************************************************************
  * Opcoes estatisticas
 ****************************************************************/
@@ -196,3 +217,15 @@ opcaoestatisticas(10):-
     readDia(Time_stamp_inicial,Time_stamp_final),
     peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total),
     write('O peso total neste dia foi: '),write(Peso_total),writeln('kg.').
+
+choose(X) :- write('Escolha uma opção: '),read(X).
+invalida :- write('Opção Invalida!').
+continue :- nl,writeln('escreva ok para continuar'),read(_),fail.
+writeCaminho(Caminho,Dist) :- 
+    write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).
+
+printEncomenda(Id,Estafeta,Transporte,Preco) :-
+    write('O id da sua encomenda é: '),writeln(Id),
+    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
+    write('Modo de Transporte: '),writeln(Transporte),
+    write('Preco Total: '),writeln(Preco),nl.
