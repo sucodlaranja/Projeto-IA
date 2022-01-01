@@ -1,16 +1,17 @@
 %esta condicao e pra dizer ao prolog que a encomenda nao e estatica e podemos adicionar
 :- dynamic(encomenda/11).
 :- dynamic(transporte/2).
-:- dynamic(estafeta/4).
+:- dynamic(estafeta/5).
 :- dynamic(n_encomendas/1).
 :- dynamic(preco/7).
+:- dynamic(circuito/2).
 
 %-------------------------estafetas--------------------------------
 %estafeta(nome,avaliacao total, numero de encomendas,ocupado)
-estafeta(joao,0,0,true).
-estafeta(jorge,0,0,false).
-estafeta(ruben,0,0,false).
-estafeta(neiva,0,0,false).
+estafeta(0,joao,0,0,true).
+estafeta(1,jorge,0,0,false).
+estafeta(2,ruben,0,0,false).
+estafeta(3,neiva,0,0,false).
 
 %-------------------------transporte-------------------------------
 %specs_transporte(tipo,peso,velocidade media,índice de poluição)
@@ -19,12 +20,12 @@ specs_transporte(moto,20,35,2).
 specs_transporte(carro,100,25,3).
 
 %transporte(tipo,ocupado)
-transporte(bicicleta,false).
-transporte(bicicleta,false).
-transporte(moto,false).
-transporte(moto,false).
-transporte(carro,false).
-transporte(carro,false).
+transporte(0,bicicleta,true).
+transporte(1,bicicleta,false).
+transporte(2,moto,false).
+transporte(3,moto,false).
+transporte(4,carro,false).
+transporte(5,carro,false).
 
 
 
@@ -73,7 +74,7 @@ preco(0.5,0.5,0.5,1,1,2,3).
 n_encomendas(2).
 %encomenda(cliente,id,peso(kg),volume(m^3),prazo(Horas),preco,freguesia,data(Timestamp s),
 %estafeta,transporte,(estado-boolean entregue(true),a entregar(false))).
-encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,joao,bicicleta,false).
-encomenda(jj,1,2.5,10,2,12,perre,1640887420.1628525,joao,bicicleta,false).
+encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,0,0,false).
+encomenda(jj,1,2.5,10,2,12,perre,1640887420.1628525,0,0,false).
 
-%caminho([santa,perre,darque],id )
+%circuito([santa,perre,darque],idEncomenda)

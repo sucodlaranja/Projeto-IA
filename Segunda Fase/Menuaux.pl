@@ -26,11 +26,7 @@ continue :- nl,writeln('escreva ok para continuar'),read(_).
 writeCaminho(Caminho,Dist) :- 
     write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).
 
-printEncomenda(Id,Estafeta,Transporte,Preco) :-
-    write('O id da sua encomenda é: '),writeln(Id),
-    write('A sua encomenda sera entregue por: '),writeln(Estafeta),
-    write('Modo de Transporte: '),writeln(Transporte),
-    write('Preco Total: '),writeln(Preco),nl.
+
 
 /****************************************************************
  * Opcoes estatisticas
@@ -136,3 +132,20 @@ opcaoestatisticas(10):-
 
 
 
+%Imprime uma lista de encomendas
+printEncomendas([]).
+printEncomendas([(C,Id,Prazo,Freguesia,IdEstafeta,IdTransporte,Time,Entregue)|Tail]) :- write(Id),write(', '),
+    write(C),write(', '),write(Prazo),write(', '),
+    write(Freguesia),write(', '),estafeta(IdEstafeta,Nome,_,_,_),write(Nome),write(', '),
+    transporte(IdTransporte,Transporte,_),write(Transporte),write(', '),
+    visual_data(Time),write(', '),entregue(Entregue),nl,printEncomendas(Tail).
+
+
+printEncomenda(Id,IdEstafeta,IdTransporte,Preco) :-
+    write('O id da sua encomenda é: '),writeln(Id),
+    write('A sua encomenda sera entregue por: '),estafeta(IdEstafeta,Nome,_,_,_),writeln(Nome),
+    write('Modo de Transporte: '),transporte(IdTransporte,Transporte,_),writeln(Transporte),
+    write('Preco Total: '),writeln(Preco),nl.
+
+printEstafetas([]).
+printEstafetas([(Id,N,Av,T)|Tail]) :-write(Id),write(', '), write(N),write(', '),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).

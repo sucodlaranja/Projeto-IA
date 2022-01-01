@@ -1,5 +1,6 @@
 :- consult('EstruturaGeral.pl').
 :- consult('Menuaux.pl').
+:- consult('Invariantes.pl').
 
 /****************************************************************
  * Menus
@@ -21,6 +22,10 @@ menu(X) :-
     choose(X).
 
 
+menuaddEstafeta :- 
+    write('Insira o id do estafeta: '),read(Id),
+    write('Insira o nome do estafeta: '),read(Nome),
+    evolucao(estafeta(Id,Nome,0,0,false)).
 
 /*
     ================================================================================================
@@ -93,7 +98,7 @@ menuMudaPreco :-
     write('Insira o nova preco por moto: '),read(PMoto),
     write('Insira o nova preco por Carro: '),read(PCarro),
     remove(preco(_,_,_,_,_,_,_)),
-    insere(preco(PDistancia,PPeso,PVolume,PPrazo,PBicicleta,PMoto,PCarro)),
+    evolucao(preco(PDistancia,PPeso,PVolume,PPrazo,PBicicleta,PMoto,PCarro)),
     writeln('Tabela de precos atualizada!'). 
 
 menuVariasEncomendas :-

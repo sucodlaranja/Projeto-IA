@@ -1,27 +1,27 @@
-:- consult('BaseDeConhecimento_TesteNeiva.pl').
+:- consult('BaseDeConhecimento.pl').
 
 :- op( 900,xfy,'::' ).
 
 
 %invariante Estrutural , não pode existir transportes com o mesmo id.
 
-+transporte(Id,Y,_) ::(
++transporte(Id,_,_) ::(
     findall(Id,transporte(Id,_,_),S),
-    length(S,X),
-    X==1
+    length(S,N),
+    N==1
       ).
 
 %invariante Referencial , não pode existir transportes que nao existem na base de conhecimento .
-+transporte(Id,Y,_) ::(
-    findall(Y,specs_transporte(Y,_,_,_),T),
-    length(T,H),
-    H==1     
++transporte(_,Type,_) ::(
+    findall(Type,specs_transporte(Type,_,_,_),S),
+    length(S,N),
+    N==1     
 ).      
 
 %invariante Estrutural , não pode existir estafetas com o mesmo id.
 
-+estafeta(Id,_,_,_) :: (
-    findall(Id,estafeta(Id,_,_,_),S),
++estafeta(Id,_,_,_,_) :: (
+    findall(Id,estafeta(Id,_,_,_,_),S),
     length(S,X),
     X==1    
 ).
@@ -30,27 +30,32 @@
 
 +encomenda(Id,_,_,_,_,_,_,_,_,_,_,_) :: (
     findall(Id,encomenda(Id,_,_,_,_,_,_,_,_,_,_,_),S),
-    length(S,X),
-    X==1    
+    length(S,N),
+    N==1    
 ).
 
 
 %invariante Estrutural , não pode existir encomendas com o mesmo id .
 
-+preco(Id,_,_,_,_,_,_,_) :: (
-    findall(Id,preco(Id,_,_,_,_,_,_,_) ,S),
-    length(S,X),
-    X==1    
++preco(_,_,_,_,_,_,_) :: (
+    findall(Preco,preco(Preco,_,_,_,_,_,_),S),
+    length(S,N),
+    N==1    
 ).
 
++circuito(_,Id) :: (
+    findall(Id,circuito(Id),S),
+    length(S,N),
+    N==1
+).
 
 evolucao(Termo) :- findall(Inv,+Termo::Inv,Lista),
 	insercao(Termo),
 	teste(Lista).
 
-involucao(Termos) :- findall(I,-Termos::I,Lista),
+involucao(Termo) :- findall(I,-Termo::I,Lista),
     teste(Lista),
-    remove(T).
+    remove(Termo).
 
 
 insercao( Termo ) :-

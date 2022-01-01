@@ -180,13 +180,13 @@ isZona(A) :- mapa(_,A,_).
 
 
 %Mostra todos os estafetas, e so copiar isto para os outros...
-estafetas(Result) :- findall((N,Av,T),estafeta(N,Av,T,_),Result).
+estafetas(Result) :- findall((Id,N,Av,T),estafeta(Id,N,Av,T,_),Result).
 
 %Mostra todas as encomendas
-encomendas(Result) :- findall((C,Id,Prazo,Freguesia,Estafeta,Transporte,Time,Entregue),(encomenda(C,Id,_,_,Prazo,_,Freguesia,Time,Estafeta,Transporte,Entregue)),Result).
+encomendas(Result) :- findall((C,Id,Prazo,Freguesia,IdEstafeta,Transporte,Time,Entregue),(encomenda(C,Id,_,_,Prazo,_,Freguesia,Time,IdEstafeta,Transporte,Entregue)),Result).
 
 %Mostra todas os Transportes
-transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
+transportes(Result) :- findall((Id,Nome,Peso,Velocidade,Indice),(transporte(Id,Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
 
 
 /*
@@ -197,7 +197,7 @@ transportes(Result) :- findall((Nome,Peso,Velocidade,Indice),(transporte(Nome,_)
 	====================================================================================================
 */
 escolhetransporteEc(Peso,Distancia,Prazo,R) :- 
-  findall((X,Indice),(transporte(X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
+  findall((Id,X,Indice),(transporte(Id,X,false),specs_transporte(X,_,_,Indice)),Y),sort(2,@=<,Y,Transportes),
   escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
 /*
@@ -208,24 +208,25 @@ escolhetransporteEc(Peso,Distancia,Prazo,R) :-
 	====================================================================================================
 */
 escolhetransporteVel(Peso,Distancia,Prazo,R) :-
-	findall((X,VelocidadeFinal),(transporte(X,false),specs_transporte(X,_,Velocidade,_),
+	findall((Id,X,VelocidadeFinal),(transporte(Id,X,false),specs_transporte(X,_,Velocidade,_),
 	calculaVelocidade(X,Peso,Velocidade,VelocidadeFinal)),Y),
 	sort(2,@>=,Y,Transportes),
-  escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
+    escolhetransporte_aux(R,Transportes,Peso,Distancia,Prazo).
 
-escolhetransporte_aux(H,[(H,_)],Peso,Distancia,Prazo) :- 
-	specs_transporte(H,P,Velocidade,_),
-	calculaVelocidade(H,P,Velocidade,VelocidadeFinal),
-	P >= Peso, VelocidadeFinal >= (Distancia/Prazo),!.
-escolhetransporte_aux(Nome,[(Nome,_)|_],Peso,Distancia,Prazo) :- 
+escolhetransporte_aux(Id,[(Id,Nome,_)],Peso,Distancia,Prazo) :- 
 	specs_transporte(Nome,P,Velocidade,_),
 	calculaVelocidade(Nome,P,Velocidade,VelocidadeFinal),
 	P >= Peso, VelocidadeFinal >= (Distancia/Prazo),!.
-escolhetransporte_aux(Nome,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Nome,T,Peso,Distancia,Prazo).
+escolhetransporte_aux(Id,[(Id,Nome,_)|_],Peso,Distancia,Prazo) :- 
+	specs_transporte(Nome,P,Velocidade,_),
+	calculaVelocidade(Nome,P,Velocidade,VelocidadeFinal),
+	P >= Peso, VelocidadeFinal >= (Distancia/Prazo),!.
+escolhetransporte_aux(Id,[_|T],Peso,Distancia,Prazo) :- escolhetransporte_aux(Id,T,Peso,Distancia,Prazo).
 
 
 %Escolhe o estafeta com base na sua avaliacao
-escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),first(H,R).
+escolheestafeta(R):- findall((Id,H),(estafeta(Id,_,A,T,false),divisao(A,T,H)),Y),sort(2,@>=,Y,[H|T]),
+	first(H,R).
 
 /***************************************************************
  * Handlers
@@ -241,21 +242,21 @@ escolheestafeta(R):- findall((X,H),(estafeta(X,A,T,false),divisao(A,T,H)),Y),sor
 
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,false),
+	encomenda(_,Id,_,_,Prazo,_,_,Data,IdEstafeta,Transporte,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
-    updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,false),Avaliacao),
+    updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,Transporte,false),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
 	repeat,menuEscolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
 	writeCaminho(CaminhoVolta,DistVolt).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,_,Data,Estafeta,Transporte,false),
+	encomenda(_,Id,_,_,Prazo,_,_,Data,IdEstafeta,Transporte,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
-	updateDelivery(estafeta(Estafeta,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,Estafeta,Transporte,false),NewAV),
+	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,Transporte,false),NewAV),
 	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV),repeat,
 	menuEscolheCaminho(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt).
 
@@ -286,16 +287,16 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
 	get_time(TimeStamp),
 	inicio(X),
     escolheCaminho(TipoP,X,Freguesia,Caminho,Distancia),
-    escolhetransporte(TipoT,Peso,Distancia,Prazo,Transporte),
-    escolheestafeta(Estafeta),
+    escolhetransporte(TipoT,Peso,Distancia,Prazo,IdTransporte),
+    escolheestafeta(IdEstafeta),
     n_encomendas(Id),
-    calculapreco(Distancia,Peso,Volume,Prazo,Transporte,Preco),!,
+    calculapreco(Distancia,Peso,Volume,Prazo,IdTransporte,Preco),!,
 	writeCaminho(Caminho,Distancia),
-	printEncomenda(Id,Estafeta,Transporte,Preco),
+	printEncomenda(Id,IdEstafeta,IdTransporte,Preco),
 	write('Pretende guardar esta informacão na base de conhecimento?[y/n] '), read(Resposta),
 	(Resposta = 'y' ->
-	(insere(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,Estafeta,Transporte,false)),
-    addNewEncomenda(transporte(Transporte,false),estafeta(Estafeta,_,_,false),n_encomendas(Id))) ; true).
+	(evolucao(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,IdEstafeta,IdTransporte,false)),
+    addNewEncomenda(transporte(IdTransporte,_,false),estafeta(IdEstafeta,_,_,_,false),n_encomendas(Id))) ; true).
 
 fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
 
@@ -306,8 +307,8 @@ escolheCaminho(3,Nodo,Freguesia,Caminho,Distancia) :- !,write('Insira o limite d
 	read(Limite), caminhoDfslimite(Nodo,Caminho,Distancia,Limite,Freguesia).
 escolheCaminho(_,_,_,_,_) :- invalida,fail.
 
-escolhetransporte(1,Peso,Distancia,Prazo,Transporte) :- escolhetransporteVel(Peso,Distancia,Prazo,Transporte).
-escolhetransporte(2,Peso,Distancia,Prazo,Transporte) :- escolhetransporteEc(Peso,Distancia,Prazo,Transporte).
+escolhetransporte(1,Peso,Distancia,Prazo,IdTransporte) :- escolhetransporteVel(Peso,Distancia,Prazo,IdTransporte).
+escolhetransporte(2,Peso,Distancia,Prazo,IdTransporte) :- escolhetransporteEc(Peso,Distancia,Prazo,IdTransporte).
 
 
 variasEncomendasHandler(L) :- makeFregList(L,R),

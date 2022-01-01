@@ -5,7 +5,7 @@
 	Vamos encontrar o estafeta que tem menor media de indice de poluição por encomenda. 
 */ 
 estafeta_mais_ecologico(Mais_ecologico) :- 
-	findall(Estafeta,(estafeta(Estafeta,_,Num_encomendas,_) , Num_encomendas =\= 0),L_estafeta),
+	findall(Estafeta,(estafeta(_,Estafeta,_,Num_encomendas,_) , Num_encomendas =\= 0),L_estafeta),
 	maplist(quantas_vezes_usou,L_estafeta,L_pares),
 	min_member((_,Mais_ecologico),L_pares).
 
@@ -74,7 +74,7 @@ volume_zona(Zona,(Volume,Zona)) :-
 	Calcular a classificação média de satisfação de cliente para um determinado estafeta.
 */
 mediaestafeta(Estafeta,Media) :- 
-	estafeta(Estafeta,Total,Numero,_),
+	estafeta(_,Estafeta,Total,Numero,_),
 	Numero =\= 0,
 	Media is Total/ Numero.
 

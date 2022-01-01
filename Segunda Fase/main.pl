@@ -14,7 +14,7 @@ main :-
 option(1) :- !,estafetasHeader,estafetas(R),printEstafetas(R),continue,main.
 option(2) :- !,encomendaHeader,encomendas(R),printEncomendas(R),continue,main.
 option(3) :- !,transporteHeader,transportes(R),printList(R),continue,main.
-option(4) :- !,continue,main.
+option(4) :- !,menuaddEstafeta,continue,main.
 option(5) :- !,continue,main.
 option(6) :- !,menuEncomenda,continue,main.
 option(7) :- !,menuestatisticas,continue,main.

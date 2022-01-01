@@ -1,4 +1,4 @@
-:- consult('BaseDeConhecimento.pl').
+:- consult('Invariantes.pl').
 
 isPar(X):-mod(X,2) =:= 0.
 isImpar(X):-mod(X,2) =\= 0.
@@ -69,16 +69,7 @@ printList([H|T]) :- writeln(H),printList(T).
 
 
 
-%Imprime uma lista de encomendas
-printEncomendas([]).
-printEncomendas([(C,Id,Prazo,Freguesia,Estafeta,Transporte,Time,Entregue)|Tail]) :- write(Id),write(', '),write(C),write(', '),write(Prazo),
-    write(', '),write(Freguesia),write(', '),write(Estafeta),write(', '),
-    write(Transporte),write(', '),
-    visual_data(Time),write(', '),entregue(Entregue),nl,printEncomendas(Tail).
 
-
-printEstafetas([]).
-printEstafetas([(N,Av,T)|Tail]) :- write(N),write(', '),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
 
 printListQ2([]).
 printListQ2([(Estafeta,Lista_Ids)|T]) :- 
@@ -144,15 +135,6 @@ seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
 second_pair((_,B),B).
 first((H,_),H).
 
-/****************************************************************
- * Operacoes sobre base de Conhecimento
-****************************************************************/
-insere(Termo) :- assert(Termo).
-insere(Termo) :- retract(Termo), !, fail.
-
-
-remove(Termo) :- retract(Termo).
-remove(Termo) :- assert(Termo), !, fail.
 
 /*
     ==============================================================================
@@ -161,11 +143,11 @@ remove(Termo) :- assert(Termo), !, fail.
     ==============================================================================
 */
 addNewEncomenda(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
-	insere(transporte(Nt,true)),insere(estafeta(Ne,Av,T,true)),soma(Y,1,R),insere(n_encomendas(R)).
+	evolucao(transporte(Nt,true)),evolucao(estafeta(Ne,Av,T,true)),soma(Y,1,R),evolucao(n_encomendas(R)).
 
 addNewDeliveryDone(estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
-	soma(Av,Avaliacao,RAv),soma(T,1,Total),insere(estafeta(Ne,RAv,Total,true)),
-    insere(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,true)).
+	soma(Av,Avaliacao,RAv),soma(T,1,Total),evolucao(estafeta(Ne,RAv,Total,true)),
+    evolucao(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,true)).
 
 
 
@@ -175,15 +157,18 @@ addNewDeliveryDone(estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo
     peso, volume, prazo e modo de transporte.
     ========================================================================
 */
-calculapreco(Distancia,Peso,Volume,Prazo,bicicleta,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,Id,R) :- 
+    transporte(Id,bicicleta,_),
 	preco(PD,PPeso,PVolume,PPrazo,PBicicleta,_,_),
 	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PBicicleta).
 
-calculapreco(Distancia,Peso,Volume,Prazo,moto,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,Id,R) :-
+    transporte(Id,moto,_), 
 	preco(PD,PPeso,PVolume,PPrazo,_,PMoto,_),
 	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PMoto).
 
-calculapreco(Distancia,Peso,Volume,Prazo,carro,R) :- 
+calculapreco(Distancia,Peso,Volume,Prazo,Id,R) :- 
+    transporte(Id,carro,_), 
 	preco(PD,PPeso,PVolume,PPrazo,_,_,PCarro),
 	R is (PD*Distancia + Peso*PPeso + PVolume*Volume + PPrazo/Prazo + PCarro).
 
@@ -220,7 +205,7 @@ mybetween(X,Y,B) :- B>=X, B=<Y.
 ****************************************************************/
 encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data,entregue?').
 transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
-estafetasHeader :- writeln('Nome,Avaliacao').
+estafetasHeader :- writeln('Id,Nome,Avaliacao').
 
 entregue(false) :- write('não').
 entregue(true) :- write('sim').
