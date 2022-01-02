@@ -153,7 +153,7 @@ printEncomenda(Id,IdEstafeta,IdTransporte,Preco) :-
     write('O id da sua encomenda é: '),writeln(Id),
     write('A sua encomenda sera entregue por: '),estafeta(IdEstafeta,Nome,_,_,_),writeln(Nome),
     write('Modo de Transporte: '),transporte(IdTransporte,Transporte,_),writeln(Transporte),
-    write('Preco Total: '),writeln(Preco),write('$'),nl.
+    write('Preco Total: '),write(Preco),writeln('$'),nl.
 
 %Imprime informacoes sobre os estafetas
 printEstafetas([]).
