@@ -7,12 +7,13 @@ o True atualiza o estado quando o programa recebe uma nova encomenda
 O False atualiza o estado quando o utilizador da entrega de uma encomenda
 ===============================================================================================
 */
-newEncomenda(Transporte,Estafeta,Id) :- 
-	remove(Transporte),remove(Estafeta),remove(Id),
-	addNewEncomenda(Transporte,Estafeta,Id).
+newEncomenda(Transporte,Estafeta,n_encomendas(Id),Caminho) :- 
+	remove(Transporte),remove(Estafeta),remove(n_encomendas(Id)),evolucao(circuito(Caminho,Id)),
+	addNewEncomenda(Transporte,Estafeta,n_encomendas(Id)).
 
-updateDelivery(Estafeta,Encomenda,Avaliacao) :- 
-	remove(Estafeta),remove(Encomenda),
+updateDelivery(Estafeta,Encomenda,Avaliacao,Id,CaminhoVolta) :- 
+	remove(Estafeta),remove(Encomenda),remove(circuito(Caminho,Id)),append(Caminho,CaminhoVolta,CaminhoTotal),
+	evolucao(circuito(CaminhoTotal,Id)),
 	addNewDeliveryDone(Estafeta,Encomenda,Avaliacao).
 
 /***************************************************************
@@ -242,23 +243,23 @@ escolheestafeta(R):- findall((Id,H),(estafeta(Id,_,A,T,false),divisao(A,T,H)),Y)
 
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,_,Data,IdEstafeta,Transporte,false),
+	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,_,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
-    updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,Transporte,false),Avaliacao),
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
 	repeat,menuEscolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
-	writeCaminho(CaminhoVolta,DistVolt).
+	writeCaminho(CaminhoVolta,DistVolt),
+	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),Avaliacao,Id,CaminhoVolta).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,_,Data,IdEstafeta,Transporte,false),
+	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,_,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
-	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,Transporte,false),NewAV),
 	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV),repeat,
-	menuEscolheCaminho(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt).
+	menuEscolheCaminho(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt),
+	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),NewAV,Id,CaminhoVolta).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 	encomenda(_,Id,_,_,_,_,_,Data,_,_,false),
@@ -296,7 +297,7 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
 	write('Pretende guardar esta informacão na base de conhecimento?[y/n] '), read(Resposta),
 	(Resposta = 'y' ->
 	(evolucao(encomenda(Nome,Id,Peso,Volume,Prazo,Preco,Freguesia,TimeStamp,IdEstafeta,IdTransporte,false)),
-    addNewEncomenda(transporte(IdTransporte,_,false),estafeta(IdEstafeta,_,_,_,false),n_encomendas(Id))) ; true).
+    newEncomenda(transporte(IdTransporte,_,false),estafeta(IdEstafeta,_,_,_,false),n_encomendas(Id),Caminho)) ; true).
 
 fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
 
@@ -304,7 +305,7 @@ escolheCaminho(1,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoDfs(Nodo,Caminho,
 escolheCaminho(2,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoBfs(Nodo,Caminho,Distancia,Freguesia).
 escolheCaminho(4,Nodo,Freguesia,Caminho,Distancia) :- !,bestWayDfs(Nodo,Caminho,Distancia,Freguesia).
 escolheCaminho(3,Nodo,Freguesia,Caminho,Distancia) :- !,write('Insira o limite de profundidade'),
-	read(Limite), caminhoDfslimite(Nodo,Caminho,Distancia,Limite,Freguesia).
+	read(Limite),(caminhoDfslimite(Freguesia,Caminho,Distancia,Nodo,Limite) -> true ; fail).
 escolheCaminho(_,_,_,_,_) :- invalida,fail.
 
 escolhetransporte(1,Peso,Distancia,Prazo,IdTransporte) :- escolhetransporteVel(Peso,Distancia,Prazo,IdTransporte).

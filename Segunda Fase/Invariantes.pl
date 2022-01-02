@@ -28,8 +28,8 @@
 
 %invariante Estrutural , não pode existir encomendas com o mesmo id!!!!!!
 
-+encomenda(Id,_,_,_,_,_,_,_,_,_,_,_) :: (
-    findall(Id,encomenda(Id,_,_,_,_,_,_,_,_,_,_,_),S),
++encomenda(_,Id,_,_,_,_,_,_,_,_,_) :: (
+    findall(Id,encomenda(_,Id,_,_,_,_,_,_,_,_,_),S),
     length(S,N),
     N==1    
 ).
@@ -44,7 +44,7 @@
 ).
 
 +circuito(_,Id) :: (
-    findall(Id,circuito(Id),S),
+    findall(Id,circuito(_,Id),S),
     length(S,N),
     N==1
 ).

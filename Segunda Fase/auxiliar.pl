@@ -142,12 +142,12 @@ first((H,_),H).
     quando uma encomenda foi entregue.
     ==============================================================================
 */
-addNewEncomenda(transporte(Nt,X),estafeta(Ne,Av,T,X),n_encomendas(Y)) :-
-	evolucao(transporte(Nt,true)),evolucao(estafeta(Ne,Av,T,true)),soma(Y,1,R),evolucao(n_encomendas(R)).
+addNewEncomenda(transporte(IdT,Nt,X),estafeta(IdE,Ne,Av,T,X),n_encomendas(Y)) :-
+	evolucao(transporte(IdT,Nt,true)),evolucao(estafeta(IdE,Ne,Av,T,true)),soma(Y,1,R),evolucao(n_encomendas(R)).
 
-addNewDeliveryDone(estafeta(Ne,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,false),Avaliacao) :-
-	soma(Av,Avaliacao,RAv),soma(T,1,Total),evolucao(estafeta(Ne,RAv,Total,true)),
-    evolucao(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,Estafeta,Transporte,true)).
+addNewDeliveryDone(estafeta(IdE,Nome,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,IdE,IdT,false),Avaliacao) :-
+	soma(Av,Avaliacao,RAv),soma(T,1,Total),evolucao(estafeta(IdE,Nome,RAv,Total,true)),
+    evolucao(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,IdE,IdT,true)).
 
 
 
