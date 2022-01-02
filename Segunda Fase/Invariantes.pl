@@ -11,12 +11,19 @@
     N==1
       ).
 
-%invariante Referencial , não pode existir transportes que nao existem na base de conhecimento .
+%invariante Referencial , não pode existir transportes que nao contêm specs_transporte existem na base de conhecimento .
 +transporte(_,Type,_) ::(
     findall(Type,specs_transporte(Type,_,_,_),S),
     length(S,N),
     N==1     
-).      
+).  
+
+%invariante Referencial , so pode existir um specs_transporte por tipo de transporte na base de conhecimento .
++specs_transporte(Type,_,_,_) ::(
+    findall(Type,specs_transporte(Type,_,_,_),S),
+    length(S,N),
+    N==1 
+).
 
 %invariante Estrutural , não pode existir estafetas com o mesmo id.
 
@@ -26,8 +33,7 @@
     X==1    
 ).
 
-%invariante Estrutural , não pode existir encomendas com o mesmo id!!!!!!
-
+%invariante Estrutural , não pode existir encomendas com o mesmo id
 +encomenda(_,Id,_,_,_,_,_,_,_,_,_) :: (
     findall(Id,encomenda(_,Id,_,_,_,_,_,_,_,_,_),S),
     length(S,N),
@@ -43,6 +49,7 @@
     N==1    
 ).
 
+%invariante Estrutural , não pode existir circuitos com o mesmo id .
 +circuito(_,Id) :: (
     findall(Id,circuito(_,Id),S),
     length(S,N),

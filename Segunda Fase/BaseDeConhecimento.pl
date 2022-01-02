@@ -5,10 +5,10 @@
 :- dynamic(n_encomendas/1).
 :- dynamic(preco/7).
 :- dynamic(circuito/2).
-
+:- dynamic(specs_transporte/4).
 %-------------------------estafetas--------------------------------
 %estafeta(Id,nome,avaliacao total, numero de encomendas,ocupado)
-estafeta(0,joao,0,0,true).
+estafeta(0,joao,5,1,true).
 estafeta(1,jorge,0,0,true).
 estafeta(2,ruben,0,0,false).
 estafeta(3,neiva,0,0,false).
@@ -71,11 +71,13 @@ goal(santa_marta_de_portuzelo).
 %preco(distancia(km),peso(Kg),volume(m³),1/prazo,bicicleta,moto,carro)
 preco(0.5,0.5,0.5,1,1,2,3).
 
-n_encomendas(2).
+n_encomendas(3).
 %encomenda(cliente,id,peso(kg),volume(m^3),prazo(Horas),preco,freguesia,data(Timestamp s),
 %estafeta,transporte,(estado-boolean entregue(true),a entregar(false))).
 encomenda(jj,0,2.5,10,2,12,darque,1640887420.1628525,0,0,false).
-encomenda(jj,1,2.5,10,2,12,perre,1641085714.0908973,1,3,false).
+encomenda(jj,1,2.5,10,2,12,darque,1641128070.1527941,0,0,true).
+encomenda(jj,2,2.5,10,2,12,perre,1641085714.0908973,1,3,false).
 
 %circuito([freguesias],idEncomenda)
+circuito([santa_marta_de_portuzelo,meadela,darque],0).
 circuito([santa_marta_de_portuzelo,perre],1).

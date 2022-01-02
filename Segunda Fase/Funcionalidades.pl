@@ -14,8 +14,10 @@ estafeta_mais_ecologico(Mais_ecologico) :-
    gera o par (indice de poluição por encomenda,estafeta).*/ 
 quantas_vezes_usou(Nome_estafeta,(Pol_media,Nome_estafeta)) :-
 	aggregate_all((sum(Ind_poluicao),count),
-		(specs_transporte(Meio_transporte,_,_,Ind_poluicao)
-			,encomenda(_,_,_,_,_,_,_,_,Nome_estafeta,Meio_transporte,true)),
+		(transporte(IdTranporte,Meio_transporte,_),
+			specs_transporte(Meio_transporte,_,_,Ind_poluicao),
+			estafeta(IdEstafeta,Nome_estafeta,_,_,_),
+			encomenda(_,_,_,_,_,_,_,_,IdEstafeta,IdTranporte,true)),
 		(Ind_poluicao_total,Num_encomendas)),
 		Pol_media is Ind_poluicao_total/Num_encomendas.
 
@@ -73,8 +75,8 @@ volume_zona(Zona,(Volume,Zona)) :-
 /* Querie 6
 	Calcular a classificação média de satisfação de cliente para um determinado estafeta.
 */
-mediaestafeta(Estafeta,Media) :- 
-	estafeta(_,Estafeta,Total,Numero,_),
+mediaestafeta(IdEStafeta,Media) :- 
+	estafeta(IdEStafeta,_,Total,Numero,_),
 	Numero =\= 0,
 	Media is Total/ Numero.
 
@@ -85,7 +87,7 @@ mediaestafeta(Estafeta,Media) :-
 	Depois para cada transporte calculamos em quantas encomendas foram utilizados.
 */
 entregas_meio_transporte(Time_stamp_inicial,Time_stamp_final,Lista) :- 
-	findall(Meio_transporte,transporte(Meio_transporte,_),Lista_mt_dup),
+	findall(Meio_transporte,transporte(_,Meio_transporte,_),Lista_mt_dup),
 	sort(Lista_mt_dup,Lista_mt),
 	maplist(quantas_vezes_usou_transporte(Time_stamp_inicial,Time_stamp_final),Lista_mt,Lista).
 
@@ -95,7 +97,8 @@ entregas_meio_transporte(Time_stamp_inicial,Time_stamp_final,Lista) :-
 quantas_vezes_usou_transporte(Time_stamp_inicial,Time_stamp_final,Meio_transporte,
 	(Vezes_usado,Meio_transporte)) :-
 	aggregate_all(count,
-		(encomenda(_,_,_,_,_,_,_,Time,_,Meio_transporte,true),
+		(encomenda(_,_,_,_,_,_,_,Time,_,IdTransporte,true),
+			transporte(IdTransporte,Meio_transporte,_),
 			mybetween(Time_stamp_inicial,Time_stamp_final,Time)),
 		Vezes_usado).
 
@@ -131,3 +134,18 @@ peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total) :-
 	aggregate_all(sum(Peso),
 		(encomenda(_,_,Peso,_,_,_,_,Time,_,_,true),mybetween(Time_stamp_inicial,Time_stamp_final,Time)),
 		Peso_total).
+
+
+/* Querie 11
+	calcula o circuito mais comum tendo em conta o peso ou o volume transportado
+*/
+circuitoMaisComunsPeso(R) :- findall((Caminho,Id),circuito(Caminho,Id),S), circuitoMaisComunsauxPeso(S,R1),sort(2,@>=,R1,R).
+
+circuitoMaisComunsauxPeso([],[]).
+circuitoMaisComunsauxPeso([(C,Id)|T],R) :- countPeso((C,Id),T,Total),apagat((C,Id),T,T1), circuitoMaisComunsauxPeso(T1,R1) ,append([(C,Total)],R1,R).
+
+
+circuitoMaisComunsVol(R) :- findall((Caminho,Id),circuito(Caminho,Id),S), circuitoMaisComunsauxVol(S,R1),sort(2,@>=,R1,R).
+circuitoMaisComunsauxVol([],[]).
+circuitoMaisComunsauxVol([(C,Id)|T],R) :- countVol((C,Id),T,Total),apagat((C,Id),T,T1), circuitoMaisComunsauxVol(T1,R1) ,append([(C,Total)],R1,R).
+

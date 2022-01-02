@@ -67,12 +67,9 @@ take(N, [X|Xs], [X|Ys]) :- M is N-1, take(M, Xs, Ys).
 printList([]).
 printList([H|T]) :- writeln(H),printList(T).
 
-
-
-
-
 printListQ2([]).
-printListQ2([(Estafeta,Lista_Ids)|T]) :- 
+printListQ2([(IdEstafeta,Lista_Ids)|T]) :- 
+    estafeta(IdEstafeta,Estafeta,_,_,_),
     write(Estafeta),
     write(' -> Ids das encomendas : '),
     printListQ2aux(Lista_Ids),
@@ -101,22 +98,27 @@ printListQ7([(Vezes_usado,Meio_transporte)|T]) :-
     printListQ7(T).
 
 
+%remove a cabeca de uma lista
 removeHead([_|T],T).
 
-
+%devolve a cabeca de uma lista
 getHead([H|_],H).
 
+%faz uma lista com o segundo elemento de uma lista de pares
 secondPairList([],[]).
 secondPairList([(_,R)|T],L) :- secondPairList(T,L1), append([R], L1, L).
 
+%faz uma lista com o primeiro elemento de uma lista de pares
 firstPairList([],[]).
 firstPairList([(F,_)|T],L) :- firstPairList(T,L1), append([F], L1, L).
 
+%faz uma lista de freguesias
 makeFregList([],[]).
 makeFregList([Id|T],R) :- 
 	encomenda(_,Id,_,_,_,_,Freguesia,_,_,_,_),
 	makeFregList(T,R1),R =[Freguesia|R1].
 
+%inverte uma lista
 inverso(Xs,Ys):-
 	inverso(Xs,[],Ys).
 
@@ -127,6 +129,20 @@ inverso([X|Xs],Ys,Zs):-
 seleciona(E,[E|Xs],Xs).
 seleciona(E,[X|Xs],[X|Ys]) :- seleciona(E,Xs,Ys).
 
+%soma o peso de todas as encomendas com determinado circuito
+countPeso((_,Id),[],Peso) :- encomenda(_,Id,Peso,_,_,_,_,_,_,_,_).
+countPeso((C,_),[(C,Id)|T],R) :- countPeso((C,_),T,R1),encomenda(_,Id,Peso,_,_,_,_,_,_,_,_), R is Peso + R1.
+countPeso((C,_),[_|T],R) :- countPeso((C,_),T,R).
+
+%soma o volume de todas as encomendas com determinado circuito
+countVol((_,Id),[],Vol) :- encomenda(_,Id,_,Vol,_,_,_,_,_,_,_).
+countVol((C,_),[(C,Id)|T],R) :- countVol((C,_),T,R1),encomenda(_,Id,_,Vol,_,_,_,_,_,_,_), R is Vol + R1.
+countVol((C,_),[_|T],R) :- countVol((C,_),T,R).
+
+%apaga todas as ocurrencias de um elemento numa determinada lista
+apagat(_,[],[]).
+apagat((C,_),[(C,Id)|T],R) :- apagat((C,Id),T,R).
+apagat(X,[H|T],R) :- apagat(X,T,R2), append([H],R2,R).
 
 
 /****************************************************************
@@ -145,8 +161,8 @@ first((H,_),H).
 addNewEncomenda(transporte(IdT,Nt,X),estafeta(IdE,Ne,Av,T,X),n_encomendas(Y)) :-
 	evolucao(transporte(IdT,Nt,true)),evolucao(estafeta(IdE,Ne,Av,T,true)),soma(Y,1,R),evolucao(n_encomendas(R)).
 
-addNewDeliveryDone(estafeta(IdE,Nome,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,IdE,IdT,false),Avaliacao) :-
-	soma(Av,Avaliacao,RAv),soma(T,1,Total),evolucao(estafeta(IdE,Nome,RAv,Total,true)),
+addNewDeliveryDone(estafeta(IdE,Nome,Av,T,true),encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,IdE,IdT,false),Avaliacao,Transporte) :-
+	soma(Av,Avaliacao,RAv),soma(T,1,Total),evolucao(estafeta(IdE,Nome,RAv,Total,false)),evolucao(transporte(IdT,Transporte,false)),
     evolucao(encomenda(Cliente,Id,Peso,Volume,Prazo,Preco,Freguesia,Data,IdE,IdT,true)).
 
 
@@ -176,6 +192,7 @@ calculapreco(Distancia,Peso,Volume,Prazo,Id,R) :-
 adjacente(A,B,Km) :- mapa(A,B,Km).
 adjacente(A,B,Km) :- mapa(B,A,Km).
 
+%adjacente para algoritmos de pesquisa informada
 adjacente_distancia([Nodo|Caminho]/Custo/_,[ProxNodo,Nodo|Caminho]/NovoCusto/EstDist) :-
 	adjacente(Nodo,ProxNodo,PassoCustoDist),
 	\+ member(ProxNodo,Caminho),

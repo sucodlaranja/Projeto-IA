@@ -11,10 +11,10 @@ newEncomenda(Transporte,Estafeta,n_encomendas(Id),Caminho) :-
 	remove(Transporte),remove(Estafeta),remove(n_encomendas(Id)),evolucao(circuito(Caminho,Id)),
 	addNewEncomenda(Transporte,Estafeta,n_encomendas(Id)).
 
-updateDelivery(Estafeta,Encomenda,Avaliacao,Id,CaminhoVolta) :- 
-	remove(Estafeta),remove(Encomenda),remove(circuito(Caminho,Id)),append(Caminho,CaminhoVolta,CaminhoTotal),
-	evolucao(circuito(CaminhoTotal,Id)),
-	addNewDeliveryDone(Estafeta,Encomenda,Avaliacao).
+updateDelivery(Estafeta,Encomenda,Avaliacao,Id,CaminhoVolta,transporte(IdT,NomeT,true)) :- 
+	remove(Estafeta),remove(Encomenda),remove(circuito(Caminho,Id)),remove(transporte(IdT,NomeT,true)),
+	append(Caminho,CaminhoVolta,CaminhoTotal),evolucao(circuito(CaminhoTotal,Id)),
+	addNewDeliveryDone(Estafeta,Encomenda,Avaliacao,NomeT).
 
 /***************************************************************
  * Algoritmos de Procura não informada
@@ -38,12 +38,13 @@ profundidade(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal) :-
     not(member(ProxNodo,Historico)),
     profundidade(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal), C is C1+C2.
 
+%calcula o melhor caminho por Dfs
 bestWayDfs(Nodo,Caminho,Dist,NodoFinal) :- findall((Caminhoaux,Distaux),
 	caminhoDfs(Nodo,Caminhoaux,Distaux,NodoFinal),Caminhos), 
 	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
 
 
-%Busca Iterativa Limitada em Profundidade
+%algoritmo de Busca Iterativa Limitada em Profundidade
 caminhoDfslimite(Nodo,[Nodo|Caminho],C,NodoFinal,Limite) :- profundidadelimite(Nodo,[Nodo],Caminho,C,NodoFinal,Limite).
 
 
@@ -54,11 +55,12 @@ profundidadelimite(Nodo,Historico,[ProxNodo|Caminho],C,NodoFinal,Limite) :-
     not(member(ProxNodo,Historico)), length(Historico,N), Limite >= N,
     profundidadelimite(ProxNodo,[ProxNodo|Historico],Caminho,C2,NodoFinal,Limite), C is C1+C2.
 
+%calcula o melhor caminho por busca Iterativa Limitada em Profundidade
 bestWayDfslimite(Nodo,Caminho,Dist,NodoFinal,Limite) :- findall((Caminhoaux,Distaux),
 	caminhoDfslimite(Nodo,Caminhoaux,Distaux,NodoFinal,Limite),Caminhos), 
 	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
 
-%caminho bfs
+%Algoritmo bfs
 caminhoBfs(Inicio,Solucao,Distancia,Dest) :- caminhoBfsaux(Inicio,Dest,Solucao),calculaDist(Solucao,Distancia).
 
 caminhoBfsaux(Orig, Dest, Cam):- bfs3(Dest,[[Orig]],Cam).
@@ -78,6 +80,7 @@ calculaDist([],0).
 calculaDist([_],0).
 calculaDist([H,X2|T],Dist) :- adjacente(H,X2,K1), calculaDist([X2|T],K2),Dist is K1 + K2.
 
+%melhor caminho por bfs
 bestWayBfs(Nodo,Caminho,Dist,NodoFinal) :- findall((Caminhoaux,Distaux),
 	caminhoBfs(Nodo,Caminhoaux,Distaux,NodoFinal),Caminhos), 
 	sort(2,@=<,Caminhos,[(Caminho,Dist)|_]). 
@@ -143,7 +146,7 @@ obtem_melhor_distancia_g([_|Caminhos],MelhorCaminho) :-
 expande_agulosa_distancia_g(Caminho,ExpCaminhos) :-
 	findall(NovoCaminho,adjacente_distancia(Caminho,NovoCaminho),ExpCaminhos).
 
-%algoritmo para varias encomendas
+%algoritmo para varias encomendas usando o algoritmo dfs
 caminhoNEncomendas(L,Caminho,Dist) :- inicio(Nodo),findBestOrder(L,Listaux),firstPairList(Listaux,Listaux2),
 	caminhoNEncomendasaux(Listaux2,[],Caminhoaux,Distaux),getHead(Caminhoaux,Head),
 	bestWayDfs(Nodo,Caminho1,Dist1,Head),removeHead(Caminhoaux,Caminhoaux2),
@@ -180,14 +183,15 @@ isZona(A) :- mapa(A,_,_).
 isZona(A) :- mapa(_,A,_).
 
 
-%Mostra todos os estafetas, e so copiar isto para os outros...
-estafetas(Result) :- findall((Id,N,Av,T),estafeta(Id,N,Av,T,_),Result).
+%Mostra todos os estafetas
+estafetas(Result) :- findall((Id,N,Av,T),estafeta(Id,N,Av,T,_),Estafetas),sort(0,@=<,Estafetas,Result).
 
 %Mostra todas as encomendas
 encomendas(Result) :- findall((C,Id,Prazo,Freguesia,IdEstafeta,Transporte,Time,Entregue),(encomenda(C,Id,_,_,Prazo,_,Freguesia,Time,IdEstafeta,Transporte,Entregue)),Result).
 
 %Mostra todas os Transportes
-transportes(Result) :- findall((Id,Nome,Peso,Velocidade,Indice),(transporte(Id,Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Result).
+transportes(Result) :- findall((Id,Nome,Peso,Velocidade,Indice),(transporte(Id,Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Transportes),
+	sort(0,@=<,Transportes,Result).
 
 
 /*
@@ -243,23 +247,23 @@ escolheestafeta(R):- findall((Id,H),(estafeta(Id,_,A,T,false),divisao(A,T,H)),Y)
 
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,_,false),
+	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,IdTransporte,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) >= TimeStamp,
 	write('A encomenda foi entregue sem atrasos, a avalicao foi: '),writeln(Avaliacao),
 	repeat,menuEscolheCaminhoVolta(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),
 	writeCaminho(CaminhoVolta,DistVolt),
-	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),Avaliacao,Id,CaminhoVolta).
+	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),Avaliacao,Id,CaminhoVolta,transporte(IdTransporte,_,_)).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,Avaliacao):-
-	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,_,false),
+	encomenda(_,Id,_,_,Prazo,_,Freguesia,Data,IdEstafeta,IdTransporte,false),
 	validadata(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-)),
     date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp), PrazoS is Prazo*3600,Data < TimeStamp,
     (Data+PrazoS) < TimeStamp,divisao(Avaliacao,2,NewAV),
 	write('A encomenda foi entregue com atrasos, a avalicao leva penalizacao de 50%, avalicao é: '),writeln(NewAV),repeat,
 	menuEscolheCaminho(TipoP),escolheCaminhovolta(TipoP,Freguesia,CaminhoVolta,DistVolt),writeCaminho(CaminhoVolta,DistVolt),
-	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),NewAV,Id,CaminhoVolta).
+	updateDelivery(estafeta(IdEstafeta,_,_,_,true),encomenda(_,Id,_,_,_,_,_,_,_,_,false),NewAV,Id,CaminhoVolta,transporte(IdTransporte,_,_)).
 
 entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 	encomenda(_,Id,_,_,_,_,_,Data,_,_,false),
@@ -267,6 +271,7 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 	date_time_stamp(date(Ano,Mes,Dia,Hora,Minutos,0,0,-,-), TimeStamp),
 	Data > TimeStamp, writeln('A data inserida não é uma data valida.').
 
+%calcula o algoritmo de procura do caminho de volta do estafeta para o centro, escolhido pelo utilizador
 escolheCaminhovolta(1,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoDfs(Freguesia,Caminho,Distancia,Nodo).
 escolheCaminhovolta(2,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoBfs(Freguesia,Caminho,Distancia,Nodo).
 escolheCaminhovolta(3,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), bestWayDfs(Freguesia,Caminho,Distancia,Nodo).
@@ -301,6 +306,7 @@ fazEncomendaHandler(Nome,Peso,Volume,Prazo,Freguesia,TipoP,TipoT) :-
 
 fazEncomendaHandler(_,_,_,_,_) :- writeln('Pedimos desculpa mas não é possivel fazer a sua encomenda.').
 
+%calcula o algoritmo de procura do caminho do estafeta para o destino da encomenda, escolhido pelo utilizador
 escolheCaminho(1,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoDfs(Nodo,Caminho,Distancia,Freguesia).
 escolheCaminho(2,Nodo,Freguesia,Caminho,Distancia) :- !,caminhoBfs(Nodo,Caminho,Distancia,Freguesia).
 escolheCaminho(4,Nodo,Freguesia,Caminho,Distancia) :- !,bestWayDfs(Nodo,Caminho,Distancia,Freguesia).
@@ -311,7 +317,7 @@ escolheCaminho(_,_,_,_,_) :- invalida,fail.
 escolhetransporte(1,Peso,Distancia,Prazo,IdTransporte) :- escolhetransporteVel(Peso,Distancia,Prazo,IdTransporte).
 escolhetransporte(2,Peso,Distancia,Prazo,IdTransporte) :- escolhetransporteEc(Peso,Distancia,Prazo,IdTransporte).
 
-
+%handler para a funcionalidade de entrega de varias encomendas ao msm tempo
 variasEncomendasHandler(L) :- makeFregList(L,R),
 	caminhoNEncomendas(R,Caminho,Dist),writeCaminho(Caminho,Dist).
 

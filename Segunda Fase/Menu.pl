@@ -23,10 +23,14 @@ menu(X) :-
 
 
 menuaddEstafeta :- 
-    write('Insira o id do estafeta: '),read(Id),
+    write('Insira o id do novo estafeta: '),read(Id),
     write('Insira o nome do estafeta: '),read(Nome),
-    evolucao(estafeta(Id,Nome,0,0,false)).
+    evolucao(estafeta(Id,Nome,0,0,false)),writeln('estafeta adicionado com sucesso!').
 
+menuaddTransporte :-
+    write('Insira o id do novo transporte: '), read(Id),
+    write('Insira o tipo de transporte: '), read(Tipo),
+    evolucao(transporte(Id,Tipo,false)),writeln('transporte adicionado com sucesso!').
 /*
     ================================================================================================
     menu para quando o utilizador faz a encomenda, pergunta os dados da encomenda, estes sao direcionados para o handler
@@ -63,7 +67,8 @@ menuestatisticas :-
     writeln('8 - numero total de entregas pelos estafetas, num determinado intervalo de tempo.'),
     writeln('9 - calcular o número de encomendas entregues e não entregues'),
     writeln('10 - calcular o peso total transportado por estafeta num determiado dia'),
-    writeln('11 - voltar atras'),
+    writeln('11 - calcular circuitos de entrega mais comuns'),
+    writeln('12 - voltar atras'),
     choose(X),
     opcaoestatisticas(X). 
 /*

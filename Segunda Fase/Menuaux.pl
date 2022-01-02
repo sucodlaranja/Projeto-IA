@@ -21,7 +21,7 @@ menuEscolheCaminhoVolta(TipoP) :-
 	writeln('6 - Gulosa'),choose(TipoP).
 
 choose(X) :- write('Escolha uma opção: '),read(X).
-invalida :- write('Opção Invalida!').
+invalida :- writeln('Opção Invalida!').
 continue :- nl,writeln('escreva ok para continuar'),read(_).
 writeCaminho(Caminho,Dist) :- 
     write('O percurso será: '),writeln(Caminho),write('Distancia calculada(Km): '),writeln(Dist).
@@ -72,7 +72,7 @@ opcaoestatisticas(2):-
 
 % Queries 3
 opcaoestatisticas(3):- 
-    write('Nome do estafeta: '),
+    write('Id do estafeta: '),
     read(Estafeta),
     !,
     clientes_servidos(Estafeta,Lista),
@@ -98,11 +98,11 @@ opcaoestatisticas(5):-
 
 % Queries 6
 opcaoestatisticas(6):- 
-    write('Nome do estafeta: '),
+    write('id do estafeta: '),
     read(Estafeta),
     !,
     mediaestafeta(Estafeta,Media),
-    write('A média das avaliações do cliente é: '),writeln(Media),writeln('.').
+    write('A média das avaliações dos clientes é: '),write(Media),writeln('.').
 
 % Queries 7
 opcaoestatisticas(7):- 
@@ -115,7 +115,7 @@ opcaoestatisticas(7):-
 opcaoestatisticas(8):- 
     readIntervalosTempo(Time_stamp_inicial,Time_stamp_final),
     numero_total_entregas(Time_stamp_inicial,Time_stamp_final,Numero_total_entregas),
-    write('O numero total de entregas, no intervalo de tempo, é: '),write(Numero_total_entregas),writeln('kg.').
+    write('O numero total de entregas, no intervalo de tempo, é: '),write(Numero_total_entregas).
 
 % Queries 9
 opcaoestatisticas(9):-
@@ -125,12 +125,18 @@ opcaoestatisticas(9):-
     write('O numero de entregas ainda por concluir é: '),writeln(Ncomp).
 
 % Queries 10
-opcaoestatisticas(10):- 
+opcaoestatisticas(10) :- 
     readDia(Time_stamp_inicial,Time_stamp_final),
     peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total),
     write('O peso total neste dia foi: '),write(Peso_total),writeln('kg.').
 
+opcaoestatisticas(11) :- repeat,
+    writeln('1 - Por Peso'),
+    writeln('2 - Por Volume'),read(Resposta),escolheopcao(Resposta).
 
+escolheopcao(1) :- !,circuitoMaisComunsPeso(R),printList(R).
+escolheopcao(2) :- !,circuitoMaisComunsVol(R),printList(R).
+escolheopcao(_) :- invalida,fail.
 
 %Imprime uma lista de encomendas
 printEncomendas([]).
@@ -140,12 +146,13 @@ printEncomendas([(C,Id,Prazo,Freguesia,IdEstafeta,IdTransporte,Time,Entregue)|Ta
     transporte(IdTransporte,Transporte,_),write(Transporte),write(', '),
     visual_data(Time),write(', '),entregue(Entregue),nl,printEncomendas(Tail).
 
-
+%Imprime informacoes de uma determinada encomenda
 printEncomenda(Id,IdEstafeta,IdTransporte,Preco) :-
     write('O id da sua encomenda é: '),writeln(Id),
     write('A sua encomenda sera entregue por: '),estafeta(IdEstafeta,Nome,_,_,_),writeln(Nome),
     write('Modo de Transporte: '),transporte(IdTransporte,Transporte,_),writeln(Transporte),
-    write('Preco Total: '),writeln(Preco),nl.
+    write('Preco Total: '),writeln(Preco),write('$'),nl.
 
+%Imprime informacoes sobre os estafetas
 printEstafetas([]).
-printEstafetas([(Id,N,Av,T)|Tail]) :-write(Id),write(', '), write(N),write(', '),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
+printEstafetas([(Id,N,Av,T)|Tail]) :- write(Id),write(', '), write(N),write(', '),divisao(Av,T,Avaliacao),writeln(Avaliacao),printEstafetas(Tail).
