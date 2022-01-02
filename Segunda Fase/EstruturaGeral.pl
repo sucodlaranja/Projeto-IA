@@ -193,6 +193,7 @@ encomendas(Result) :- findall((C,Id,Prazo,Freguesia,IdEstafeta,Transporte,Time,E
 transportes(Result) :- findall((Id,Nome,Peso,Velocidade,Indice),(transporte(Id,Nome,_),specs_transporte(Nome,Peso,Velocidade,Indice)),Transportes),
 	sort(0,@=<,Transportes,Result).
 
+circuitos(Result) :- findall((Caminho,Id),circuito(Caminho,Id),S),sort(2,@=<,S,Result).
 
 /*
 	====================================================================================================
@@ -274,9 +275,9 @@ entregaEncomendaHandler(Id,Ano,Mes,Dia,Hora,Minutos,_) :-
 %calcula o algoritmo de procura do caminho de volta do estafeta para o centro, escolhido pelo utilizador
 escolheCaminhovolta(1,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoDfs(Freguesia,Caminho,Distancia,Nodo).
 escolheCaminhovolta(2,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), caminhoBfs(Freguesia,Caminho,Distancia,Nodo).
-escolheCaminhovolta(3,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), bestWayDfs(Freguesia,Caminho,Distancia,Nodo).
-escolheCaminhovolta(4,Freguesia,Caminho,Distancia) :-   !,inicio(Nodo),write('Insira o limite'),read(Limite),
+escolheCaminhovolta(3,Freguesia,Caminho,Distancia) :-   !,inicio(Nodo),write('Insira o limite'),read(Limite),
 	(caminhoDfslimite(Freguesia,Caminho,Distancia,Nodo,Limite) -> true ; fail).
+escolheCaminhovolta(4,Freguesia,Caminho,Distancia) :- 	!,inicio(Nodo), bestWayDfs(Freguesia,Caminho,Distancia,Nodo).
 escolheCaminhovolta(5,Freguesia,Caminho,Distancia) :-  	!,resolve_gulosa(Freguesia,Caminho/Distancia).
 escolheCaminhovolta(6,Freguesia,Caminho,Distancia) :-  	!,resolve_gulosa(Freguesia,Caminho/Distancia).
 escolheCaminho(_,_,_,_) :- invalida,fail.

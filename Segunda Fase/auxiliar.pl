@@ -223,6 +223,7 @@ mybetween(X,Y,B) :- B>=X, B=<Y.
 encomendaHeader :- writeln('Id,Nome,Prazo,Freguesia,estafeta,transporte,Data,entregue?').
 transporteHeader :- writeln('tipo de transporte, Peso maximo, Velocidade,indice de poluicao').
 estafetasHeader :- writeln('Id,Nome,Avaliacao').
+circuitoHeader :- writeln('Caminho, Id da encomenda').
 
 entregue(false) :- write('não').
 entregue(true) :- write('sim').

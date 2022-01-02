@@ -130,13 +130,15 @@ opcaoestatisticas(10) :-
     peso_total_entrege(Time_stamp_inicial,Time_stamp_final,Peso_total),
     write('O peso total neste dia foi: '),write(Peso_total),writeln('kg.').
 
+% Querie 11
 opcaoestatisticas(11) :- repeat,
     writeln('1 - Por Peso'),
-    writeln('2 - Por Volume'),read(Resposta),escolheopcao(Resposta).
+    writeln('2 - Por Volume'),read(Resposta),escolheopcao11(Resposta).
 
-escolheopcao(1) :- !,circuitoMaisComunsPeso(R),printList(R).
-escolheopcao(2) :- !,circuitoMaisComunsVol(R),printList(R).
-escolheopcao(_) :- invalida,fail.
+%auxiliar da opcao 11
+escolheopcao11(1) :- !,circuitoMaisComunsPeso(R),printList(R).
+escolheopcao11(2) :- !,circuitoMaisComunsVol(R),printList(R).
+escolheopcao11(_) :- invalida,fail.
 
 %Imprime uma lista de encomendas
 printEncomendas([]).
