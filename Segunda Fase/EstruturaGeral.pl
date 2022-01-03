@@ -63,6 +63,7 @@ bestWayDfslimite(Nodo,Caminho,Dist,NodoFinal,Limite) :- findall((Caminhoaux,Dist
 %Algoritmo bfs
 caminhoBfs(Inicio,Solucao,Distancia,Dest) :- caminhoBfsaux(Inicio,Dest,Solucao),calculaDist(Solucao,Distancia).
 
+
 caminhoBfsaux(Orig, Dest, Cam):- bfs3(Dest,[[Orig]],Cam).
 
 bfs3(Dest,[[Dest|T]|_],Solucao)  :- reverse([Dest|T],Solucao).
@@ -323,5 +324,14 @@ variasEncomendasHandler(L) :- makeFregList(L,R),
 	caminhoNEncomendas(R,Caminho,Dist),writeCaminho(Caminho,Dist).
 
 
+%Predicados para teste de tempo 
+caminhoBfsBoth(Solucao,Dest) :- inicio(Inicio),
+	caminhoBfs(Inicio,Solucao1,_,Dest),caminhoBfs(Dest,Solucao2,_,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
 
+caminhodfsBoth(Solucao,Dest) :- inicio(Inicio),
+	caminhoDfs(Inicio,Solucao1,_,Dest),caminhoDfs(Dest,Solucao2,_,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
+
+%limite 3 apenas para testes
+caminhodfsLimiteBoth(Solucao,Dest) :- inicio(Inicio),
+	caminhoDfslimite(Inicio,Solucao1,_,Dest,3),caminhoDfslimite(Dest,Solucao2,_,Inicio,3),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
 

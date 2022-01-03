@@ -36,14 +36,24 @@ inicio(santa_marta_de_portuzelo).
 mapa(cardielos,nogueira,5).
 mapa(nogueira,outeiro,10).
 mapa(nogueira,vila_de_punhe,5).
+mapa(nogueira,lanheses,8).
+mapa(lanheses,ponte_de_lima,10).
+mapa(ponte_de_lima,vila_de_punhe,6).
+mapa(ponte_de_lima,ponte_da_barca,5).
+mapa(arcos_de_valdevez,ponte_da_barca,2.5).
+mapa(arcos_de_valdevez,arcozelo,3).
+mapa(barroselas,ponte_da_barca,5).
 mapa(sarreleis,cardielos,2.5).
 mapa(santa_marta_de_portuzelo,sarreleis,2.5).
 mapa(sarreleis,perre,2.5).
 mapa(santa_marta_de_portuzelo,algedes,2.5).
+mapa(algedes,caminha,2).
+mapa(caminha,melgaco,2).
+mapa(melgaco,silvestre,4).
+mapa(melgaco,valenca,3).
 mapa(santa_marta_de_portuzelo,perre,5).
 mapa(santa_marta_de_portuzelo,gualtar,1).
 mapa(gualtar,silvestre,2).
-mapa(silvestre,outeiro,2).
 mapa(perre,outeiro,5).
 mapa(perre,meadela,5).
 mapa(santa_marta_de_portuzelo,meadela,5).
@@ -52,7 +62,7 @@ mapa(darque,vila_de_punhe,10).
 mapa(darque,barroselas,7).
 mapa(barroselas,vila_de_punhe,5).
 
-estima(sarreleis,2.5).
+estima(sarreleis,3).
 estima(gualtar,1).
 estima(silvestre,4).
 estima(perre,5).
@@ -61,9 +71,17 @@ estima(algedes,5).
 estima(cardielos,6).
 estima(outeiro,6).
 estima(darque,17).
-estima(vila_de_punhe,25).
-estima(barroselas,22).
+estima(vila_de_punhe,28).
+estima(barroselas,20).
 estima(nogueira,11).
+estima(caminha,4).
+estima(melgaco,5).
+estima(valenca,10).
+estima(lanheses,20).
+estima(ponte_de_lima,25).
+estima(ponte_da_barca,25).
+estima(arcos_de_valdevez,30).
+estima(arcozelo,31).
 estima(santa_marta_de_portuzelo,0).
 goal(santa_marta_de_portuzelo).
 
