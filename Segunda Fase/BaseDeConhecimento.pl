@@ -6,6 +6,9 @@
 :- dynamic(preco/7).
 :- dynamic(circuito/2).
 :- dynamic(specs_transporte/4).
+:- dynamic(mapa/3).
+:- dynamic(estima/2).
+
 %-------------------------estafetas--------------------------------
 %estafeta(Id,nome,avaliacao total, numero de encomendas,ocupado)
 estafeta(0,joao,5,1,false).

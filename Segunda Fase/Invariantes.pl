@@ -56,6 +56,29 @@
     N==1
 ).
 
+%invariante Referencial , so pode existir um mapa com A e B
++mapa(A,B,_) :: (
+    findall((A,B),adjacente(A,B,_),S),
+    length(S,N),
+    N == 1
+).
+
+%invariante Estrutural , so pode haver mapa se existir estima.
++mapa(A,B,_) :: (
+    findall((A,B),(estima(A,_),estima(B,_)),S),
+    length(S,N),
+    N == 1
+).
+
+%invariante Referencial , so pode haver um estima A
++estima(A,_) :: (
+    findall(A,estima(A,_),S),
+    length(S,N),
+    N == 1
+).
+
+
+
 evolucao(Termo) :- findall(Inv,+Termo::Inv,Lista),
 	insercao(Termo),
 	teste(Lista).
@@ -75,4 +98,3 @@ remove(Termo) :- assert(Termo),!,fail.
 
 teste([]).
 teste([H | T]) :- H, teste(T).
-
