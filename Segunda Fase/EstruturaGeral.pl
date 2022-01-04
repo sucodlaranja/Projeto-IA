@@ -325,13 +325,23 @@ variasEncomendasHandler(L) :- makeFregList(L,R),
 
 
 %Predicados para teste de tempo 
-caminhoBfsBoth(Solucao,Dest) :- inicio(Inicio),
-	caminhoBfs(Inicio,Solucao1,_,Dest),caminhoBfs(Dest,Solucao2,_,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
+caminhoBfsBoth(Solucao,Dest,Dist) :- inicio(Inicio),
+	caminhoBfs(Inicio,Solucao1,Dist1,Dest),caminhoBfs(Dest,Solucao2,Dist2,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao),Dist is Dist1 + Dist2.
 
-caminhodfsBoth(Solucao,Dest) :- inicio(Inicio),
-	caminhoDfs(Inicio,Solucao1,_,Dest),caminhoDfs(Dest,Solucao2,_,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
+caminhodfsBoth(Solucao,Dest,Dist) :- inicio(Inicio),
+	caminhoDfs(Inicio,Solucao1,Dist1,Dest),caminhoDfs(Dest,Solucao2,Dist2,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao),Dist is Dist1 + Dist2.
+
 
 %limite 3 apenas para testes
-caminhodfsLimiteBoth(Solucao,Dest) :- inicio(Inicio),
-	caminhoDfslimite(Inicio,Solucao1,_,Dest,3),caminhoDfslimite(Dest,Solucao2,_,Inicio,3),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao).
+caminhodfsLimiteBoth(Solucao,Dest,Dist) :- inicio(Inicio),
+	caminhoDfslimite(Inicio,Solucao1,Dist1,Dest,3),caminhoDfslimite(Dest,Solucao2,Dist2,Inicio,3),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao), Dist is Dist1 + Dist2.
 
+caminhobestwayBoth(Solucao,Dest,Dist) :- inicio(Inicio),
+bestWayDfs(Inicio,Solucao1,Dist1,Dest),bestWayDfs(Dest,Solucao2,Dist2,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao),Dist is Dist1 + Dist2.
+
+/*
+algedes - 5 - IR E vir - 2.5
+arcozelo - 61 - ir e vir - 30.5
+barroselas - 40 - ir e vir - 20
+Sarreleis -	5 - ir e vir - 5
+*/
