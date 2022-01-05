@@ -339,9 +339,3 @@ caminhodfsLimiteBoth(Solucao,Dest,Dist) :- inicio(Inicio),
 caminhobestwayBoth(Solucao,Dest,Dist) :- inicio(Inicio),
 bestWayDfs(Inicio,Solucao1,Dist1,Dest),bestWayDfs(Dest,Solucao2,Dist2,Inicio),removeHead(Solucao2,Solucao3),append(Solucao1,Solucao3,Solucao),Dist is Dist1 + Dist2.
 
-/*
-algedes - 5 - IR E vir - 2.5
-arcozelo - 61 - ir e vir - 30.5
-barroselas - 40 - ir e vir - 20
-Sarreleis -	5 - ir e vir - 5
-*/
