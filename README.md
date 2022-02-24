@@ -1,3 +1,3 @@
 # Projeto-IA
 
-Trabalho Realizado no ambito da cadeira Inteligência artificial
+Trabalho Realizado no âmbito da cadeira Inteligência artificial
